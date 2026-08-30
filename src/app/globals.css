@@ -274,10 +274,19 @@ a {
 }
 
 .brand-word {
-  font-family: var(--font-read);
-  font-size: 1.15rem;
-  font-weight: 600;
-  letter-spacing: -0.03em;
+  font-family: var(--font-sans);
+  font-size: 1.2rem;
+  font-weight: 650;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+
+.brand-grade {
+  color: #1b2a41;
+}
+
+.brand-lens {
+  color: #3db8a8;
 }
 
 .topbar {

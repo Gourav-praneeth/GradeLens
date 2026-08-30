@@ -1,16 +1,59 @@
 import Link from "next/link";
 
+const TEAL = "#3db8a8";
+const NAVY = "#1b2a41";
+
+export function GradeLensMark({ size = 36 }: { size?: number }) {
+  return (
+    <svg
+      className="brand-mark"
+      width={size}
+      height={size}
+      viewBox="0 0 64 64"
+      fill="none"
+      aria-hidden="true"
+    >
+      <path
+        d="M18 42.5 L8.5 53"
+        stroke={TEAL}
+        strokeWidth="5.5"
+        strokeLinecap="round"
+      />
+      <path
+        d="M46.2 19.2 A16 16 0 1 0 17.2 39.4"
+        stroke={TEAL}
+        strokeWidth="5.2"
+        strokeLinecap="round"
+      />
+      <path
+        d="M41.6 41.2 A16 16 0 0 0 46.2 19.2"
+        stroke={NAVY}
+        strokeWidth="5.2"
+        strokeLinecap="round"
+      />
+      <path
+        d="M20.5 29.5 L27.2 37.2 L47 14"
+        stroke={TEAL}
+        strokeWidth="5.4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 export function BrandMark({ compact = false }: { compact?: boolean }) {
   return (
     <Link href="/" className="brand">
-      <span className="brand-mark" aria-hidden="true">
-        <svg viewBox="0 0 32 32" width="28" height="28">
-          <circle cx="16" cy="16" r="14" fill="none" stroke="currentColor" strokeWidth="1.6" />
-          <circle cx="16" cy="16" r="8" fill="none" stroke="currentColor" strokeWidth="1.2" opacity="0.7" />
-          <path d="M13.2 21 V11.4 h4.1 c2.4 0 3.9 1.4 3.9 3.5 0 2.2-1.5 3.6-3.9 3.6 H15.4 V21 Z M15.4 16.8 h1.8 c1.2 0 1.9-.7 1.9-1.8 0-1.1-.7-1.8-1.9-1.8 h-1.8 Z" />
-        </svg>
-      </span>
-      {compact ? <span className="sr-only">GradeLens</span> : <span className="brand-word">GradeLens</span>}
+      <GradeLensMark />
+      {compact ? (
+        <span className="sr-only">GradeLens</span>
+      ) : (
+        <span className="brand-word">
+          <span className="brand-grade">Grade</span>
+          <span className="brand-lens">Lens</span>
+        </span>
+      )}
     </Link>
   );
 }

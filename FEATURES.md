@@ -24,12 +24,12 @@ Living list of what is built and what should come next. Update this file wheneve
 - Courses as first-class objects, with a roster of student names
 - Shared TA access on the same course and assignments
 - Submission names match the course roster when filenames look like student names
+- Class-wide review of similar deductions and a score distribution
+- Export for Canvas and Gradescope in addition to the GradeLens roster CSV
 
-## Phase 4
+## Later
 
 - Photo and scan upload with handwriting OCR
-- Class-wide consistency review (same mistake, same deduction)
-- Canvas / Gradescope export
 - Production hosting and file storage
 
 ## Ideas

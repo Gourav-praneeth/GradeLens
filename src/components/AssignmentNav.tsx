@@ -5,7 +5,7 @@ export function AssignmentNav({
   current,
 }: {
   assignmentId: string;
-  current: "assignment" | "submissions";
+  current: "assignment" | "submissions" | "review";
 }) {
   return (
     <nav className="flow-nav" aria-label="Assignment sections">
@@ -20,6 +20,12 @@ export function AssignmentNav({
         aria-current={current === "submissions" ? "page" : undefined}
       >
         Submissions
+      </Link>
+      <Link
+        href={`/assignments/${assignmentId}/review`}
+        aria-current={current === "review" ? "page" : undefined}
+      >
+        Review
       </Link>
     </nav>
   );

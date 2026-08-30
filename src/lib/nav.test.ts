@@ -21,9 +21,11 @@ describe("nav", () => {
       onAssignment: true,
       onOverview: true,
       onSubmissions: false,
+      onReview: false,
     });
     expect(assignmentPathState("/assignments/abc/submissions", id).onSubmissions).toBe(true);
     expect(assignmentPathState("/assignments/abc/submissions/sid", id).onSubmissions).toBe(true);
+    expect(assignmentPathState("/assignments/abc/review", id).onReview).toBe(true);
     expect(assignmentPathState("/assignments/other", id).onAssignment).toBe(false);
   });
 });

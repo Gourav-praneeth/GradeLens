@@ -32,5 +32,6 @@ Open [http://localhost:3000](http://localhost:3000) and create an instructor acc
 3. Generate a rubric, then edit criteria and point values.
 4. Upload student work as PDF or `.txt`. Filenames like `alex-chen.pdf` match roster names.
 5. Grade one paper or the whole stack. Each mark includes why points were taken off.
+6. Open **Review** to compare similar deductions, then export a Canvas or Gradescope CSV.
 
 Invite other TAs from the course page. Scanned PDFs with no selectable text will show a warning. Image / handwriting support is planned for a later phase.

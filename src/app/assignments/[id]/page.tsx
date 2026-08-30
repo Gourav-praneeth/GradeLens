@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AssignmentNav } from "@/components/AssignmentNav";
 import { DeleteAssignment } from "@/components/DeleteAssignment";
+import { ExportLinks } from "@/components/ExportLinks";
 import { RubricEditor } from "@/components/RubricEditor";
 import { courseDisplayName } from "@/lib/courseName";
 import { prisma } from "@/lib/db";
@@ -86,9 +87,10 @@ export default async function AssignmentPage({ params }: PageProps) {
               <Link href={`/assignments/${assignment.id}/submissions`} className="btn btn-primary">
                 Go to submissions
               </Link>
-              <a href={`/api/assignments/${assignment.id}/export`} className="btn btn-ghost">
-                Export CSV
-              </a>
+              <Link href={`/assignments/${assignment.id}/review`} className="btn btn-ghost">
+                Review stack
+              </Link>
+              <ExportLinks assignmentId={assignment.id} />
             </>
           ) : (
             <p className="text-sm text-muted">Save a rubric to upload and grade submissions.</p>

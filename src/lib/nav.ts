@@ -33,5 +33,6 @@ export function assignmentPathState(pathname: string, assignmentId: string) {
     onAssignment,
     onOverview: pathname === root,
     onSubmissions: pathname.startsWith(`${root}/submissions`),
+    onReview: pathname.startsWith(`${root}/review`),
   };
 }

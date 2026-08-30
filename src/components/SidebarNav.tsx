@@ -52,16 +52,17 @@ export function SidebarNav({ user, courses }: { user: AuthUser; courses: Sidebar
               </Link>
               {course.assignments.map((assignment) => {
                 const state = assignmentPathState(pathname, assignment.id);
+                const nested = state.onAssignment;
                 return (
                   <div key={assignment.id} className="ml-2">
                     <Link href={`/assignments/${assignment.id}`} className={navClass(state.onAssignment)}>
                       <span className="block truncate text-sm font-medium">{assignment.title}</span>
                     </Link>
-                    {state.onAssignment ? (
+                    {nested ? (
                       <div className="ml-3 space-y-1 border-l border-line pl-3">
                         <Link
                           href={`/assignments/${assignment.id}`}
-                          className={navClass(state.onOverview && !state.onSubmissions)}
+                          className={navClass(state.onOverview && !state.onSubmissions && !state.onReview)}
                         >
                           Overview
                         </Link>
@@ -70,6 +71,9 @@ export function SidebarNav({ user, courses }: { user: AuthUser; courses: Sidebar
                           className={navClass(state.onSubmissions)}
                         >
                           Submissions
+                        </Link>
+                        <Link href={`/assignments/${assignment.id}/review`} className={navClass(state.onReview)}>
+                          Review
                         </Link>
                       </div>
                     ) : null}

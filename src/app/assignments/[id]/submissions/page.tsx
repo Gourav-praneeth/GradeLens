@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AssignmentNav } from "@/components/AssignmentNav";
+import { ExportLinks } from "@/components/ExportLinks";
 import { GradeAllButton, SubmissionUploader } from "@/components/SubmissionPanel";
 import { prisma } from "@/lib/db";
 import { formatScore } from "@/lib/format";
@@ -54,9 +55,7 @@ export default async function SubmissionsPage({ params }: PageProps) {
           <h1 className="mt-2 text-2xl font-semibold tracking-tight">Submissions</h1>
           <p className="mt-1 text-sm text-muted">Upload PDF or text files, then grade one submission or all remaining.</p>
         </div>
-        <a href={`/api/assignments/${assignment.id}/export`} className="btn btn-ghost">
-          Export CSV
-        </a>
+        <ExportLinks assignmentId={assignment.id} />
       </div>
 
       <AssignmentNav assignmentId={assignment.id} current="submissions" />

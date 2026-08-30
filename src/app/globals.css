@@ -94,6 +94,8 @@ a {
   font-family: var(--font-sans);
   font-size: 0.9rem;
   font-weight: 600;
+  line-height: 1.2;
+  text-decoration: none;
   cursor: pointer;
 }
 
@@ -240,6 +242,11 @@ a {
 
 .nav-item:hover {
   background: var(--color-canvas);
+}
+
+.nav-item:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
 }
 
 .nav-item-active {

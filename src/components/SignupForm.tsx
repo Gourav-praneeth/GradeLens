@@ -29,6 +29,7 @@ export function SignupForm() {
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not create the account.");
+    } finally {
       setPending(false);
     }
   }

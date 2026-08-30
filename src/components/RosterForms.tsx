@@ -51,20 +51,28 @@ export function StudentRosterForm({ courseId }: { courseId: string }) {
 
 export function RemoveStudentButton({ courseId, studentId }: { courseId: string; studentId: string }) {
   const router = useRouter();
+  const [pending, setPending] = useState(false);
+
   return (
     <button
       className="btn btn-danger"
       type="button"
+      disabled={pending}
       onClick={async () => {
-        const response = await fetch(`/api/courses/${courseId}/students`, {
-          method: "DELETE",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ studentId }),
-        });
-        if (response.ok) router.refresh();
+        setPending(true);
+        try {
+          const response = await fetch(`/api/courses/${courseId}/students`, {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ studentId }),
+          });
+          if (response.ok) router.refresh();
+        } finally {
+          setPending(false);
+        }
       }}
     >
-      Remove
+      {pending ? "Removing…" : "Remove"}
     </button>
   );
 }

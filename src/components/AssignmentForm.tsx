@@ -35,6 +35,7 @@ export function AssignmentForm({
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not create the assignment.");
+    } finally {
       setPending(false);
     }
   }

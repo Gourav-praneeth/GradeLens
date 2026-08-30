@@ -29,6 +29,7 @@ export function CourseForm() {
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not create the course.");
+    } finally {
       setPending(false);
     }
   }

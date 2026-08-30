@@ -31,6 +31,7 @@ export function LoginForm() {
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not sign in.");
+    } finally {
       setPending(false);
     }
   }

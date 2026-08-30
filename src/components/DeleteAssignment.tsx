@@ -22,6 +22,7 @@ export function DeleteAssignment({ assignmentId, title }: { assignmentId: string
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not delete the assignment.");
+    } finally {
       setPending(false);
     }
   }

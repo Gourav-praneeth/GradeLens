@@ -63,20 +63,28 @@ export function RemoveMemberButton({
   inviteId?: string;
 }) {
   const router = useRouter();
+  const [pending, setPending] = useState(false);
+
   return (
     <button
       className="btn btn-danger"
       type="button"
+      disabled={pending}
       onClick={async () => {
-        const response = await fetch(`/api/courses/${courseId}/members`, {
-          method: "DELETE",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ memberId, inviteId }),
-        });
-        if (response.ok) router.refresh();
+        setPending(true);
+        try {
+          const response = await fetch(`/api/courses/${courseId}/members`, {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ memberId, inviteId }),
+          });
+          if (response.ok) router.refresh();
+        } finally {
+          setPending(false);
+        }
       }}
     >
-      Remove
+      {pending ? "Removing…" : "Remove"}
     </button>
   );
 }

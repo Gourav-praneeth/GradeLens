@@ -47,6 +47,7 @@ export function ScoreOverride({
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not save the override.");
+    } finally {
       setPending(false);
     }
   }

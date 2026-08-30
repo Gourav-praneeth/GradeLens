@@ -14,13 +14,27 @@ export async function POST(request: Request, context: RouteContext) {
   const access = await requireCourseAccess(auth.user.id, id);
   if (access.error) return access.error;
 
-  const body = (await request.json()) as { name?: string; email?: string };
+  const body = (await request.json()) as { name?: string; email?: string; studentNumber?: string; importText?: string };
+  const importText = String(body.importText ?? "").trim();
+  if (importText) {
+    const names = importText
+      .split(/\r?\n/)
+      .map((line) => line.split(",")[0]?.trim() ?? "")
+      .filter(Boolean);
+    if (names.length === 0) return jsonError("Paste one student name per line.");
+    const created = await prisma.$transaction(
+      names.map((name) => prisma.student.create({ data: { courseId: id, name } })),
+    );
+    return NextResponse.json({ count: created.length });
+  }
+
   const name = String(body.name ?? "").trim();
   const email = String(body.email ?? "").trim() || null;
+  const studentNumber = String(body.studentNumber ?? "").trim() || null;
   if (!name) return jsonError("Enter the student name.");
 
   const student = await prisma.student.create({
-    data: { courseId: id, name, email },
+    data: { courseId: id, name, email, studentNumber },
   });
   return NextResponse.json(student);
 }

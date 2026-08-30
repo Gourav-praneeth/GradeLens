@@ -1,0 +1,12 @@
+Sam Patel — Assignment 1
+
+Q1(a)
+Alpha is faster because 4.6 GHz times 1.8 is bigger than 5.2 times 1.3.
+I think Alpha wins.
+
+Q1(b)
+New frequencies are the same as the old ones. The ISA change cancels out.
+
+Q2
+There are 21 instructions. CPI is 2. I did not show the weighted average.
+Performance is 4.8 GHz.

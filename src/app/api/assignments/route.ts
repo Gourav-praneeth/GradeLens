@@ -77,9 +77,15 @@ export async function POST(request: Request) {
       return jsonError(solutions.warning ?? "Add the official solutions as text or a PDF.");
     }
 
+    const dueRaw = String(form.get("dueAt") ?? "").trim();
+    const dueAt = dueRaw ? new Date(dueRaw) : null;
+    const description = String(form.get("description") ?? "").trim();
+
     const assignment = await prisma.assignment.create({
       data: {
         title,
+        description,
+        dueAt: dueAt && !Number.isNaN(dueAt.getTime()) ? dueAt : null,
         courseId: course.id,
         courseLabel: course.code || course.name,
         questionsText: questions.text,

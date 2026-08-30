@@ -29,7 +29,11 @@ model Course {
   id          String         @id @default(cuid())
   name        String
   code        String?
-  createdAt   DateTime       @default(now())
+  semester    String?
+  description String        @default("")
+  accent      String        @default("#1c4d4a")
+  status      String        @default("active")
+  createdAt   DateTime      @default(now())
   members     CourseMember[]
   invites     CourseInvite[]
   students    Student[]
@@ -59,12 +63,13 @@ model CourseInvite {
 }
 
 model Student {
-  id          String       @id @default(cuid())
-  courseId    String
-  name        String
-  email       String?
-  course      Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  submissions Submission[]
+  id            String       @id @default(cuid())
+  courseId      String
+  name          String
+  email         String?
+  studentNumber String?
+  course        Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  submissions   Submission[]
 }
 
 model Assignment {
@@ -75,6 +80,8 @@ model Assignment {
   course        Course?      @relation(fields: [courseId], references: [id], onDelete: Cascade)
   questionsText String       @default("")
   solutionsText String       @default("")
+  description   String       @default("")
+  dueAt         DateTime?
   status        String       @default("draft")
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt

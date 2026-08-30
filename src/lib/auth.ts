@@ -11,16 +11,18 @@ export type AuthUser = {
   name: string;
 };
 
-export async function createSession(userId: string) {
+export async function createSession(userId: string, options?: { remember?: boolean }) {
   const token = randomBytes(32).toString("hex");
-  const expiresAt = new Date(Date.now() + SESSION_DAYS * 24 * 60 * 60 * 1000);
+  const remember = Boolean(options?.remember);
+  const expiresAt = new Date(Date.now() + (remember ? SESSION_DAYS : 1) * 24 * 60 * 60 * 1000);
   await prisma.session.create({ data: { token, userId, expiresAt } });
-  (await cookies()).set(SESSION_COOKIE, token, {
+  const cookie = await cookies();
+  cookie.set(SESSION_COOKIE, token, {
     httpOnly: true,
     sameSite: "lax",
     path: "/",
     secure: process.env.NODE_ENV === "production",
-    expires: expiresAt,
+    ...(remember ? { expires: expiresAt } : {}),
   });
 }
 

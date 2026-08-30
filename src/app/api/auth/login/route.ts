@@ -8,7 +8,7 @@ import { verifyPassword } from "@/lib/password";
 export const runtime = "nodejs";
 
 export async function POST(request: Request) {
-  const body = (await request.json()) as { email?: string; password?: string };
+  const body = (await request.json()) as { email?: string; password?: string; remember?: boolean };
   const email = normalizeEmail(String(body.email ?? ""));
   const password = String(body.password ?? "");
 
@@ -21,6 +21,6 @@ export async function POST(request: Request) {
     return jsonError("Email or password is incorrect.");
   }
 
-  await createSession(user.id);
+  await createSession(user.id, { remember: Boolean(body.remember) });
   return NextResponse.json({ ok: true });
 }

@@ -28,15 +28,21 @@ export async function POST(request: Request) {
   const auth = await requireUser();
   if (auth.error) return auth.error;
 
-  const body = (await request.json()) as { name?: string; code?: string };
+  const body = (await request.json()) as { name?: string; code?: string; semester?: string; description?: string; accent?: string };
   const name = String(body.name ?? "").trim();
   const code = String(body.code ?? "").trim() || null;
+  const semester = String(body.semester ?? "").trim() || null;
+  const description = String(body.description ?? "").trim();
+  const accent = String(body.accent ?? "").trim() || "#1c4d4a";
   if (!name) return jsonError("Give the course a name.");
 
   const course = await prisma.course.create({
     data: {
       name,
       code,
+      semester,
+      description,
+      accent,
       members: { create: { userId: auth.user.id, role: "owner" } },
     },
   });

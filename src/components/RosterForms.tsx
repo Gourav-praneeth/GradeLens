@@ -19,7 +19,7 @@ export function StudentRosterForm({ courseId }: { courseId: string }) {
       const response = await fetch(`/api/courses/${courseId}/students`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: body.name, email: body.email }),
+        body: JSON.stringify({ name: body.name, email: body.email, studentNumber: body.studentNumber }),
       });
       if (!response.ok) throw new Error(await readError(response));
       form.reset();
@@ -37,6 +37,10 @@ export function StudentRosterForm({ courseId }: { courseId: string }) {
         <span className="field-label">Student name</span>
         <input className="field" name="name" required placeholder="Alex Chen" />
       </label>
+      <label className="min-w-32 flex-1">
+        <span className="field-label">Student ID</span>
+        <input className="field" name="studentNumber" placeholder="Optional" />
+      </label>
       <label className="min-w-40 flex-1">
         <span className="field-label">Email (optional)</span>
         <input className="field" name="email" type="email" />
@@ -45,6 +49,46 @@ export function StudentRosterForm({ courseId }: { courseId: string }) {
         {pending ? "Adding…" : "Add to roster"}
       </button>
       {error ? <p className="basis-full text-sm text-pen">{error}</p> : null}
+    </form>
+  );
+}
+
+export function ImportRosterForm({ courseId }: { courseId: string }) {
+  const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
+  const [pending, setPending] = useState(false);
+
+  async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setError(null);
+    setPending(true);
+    const form = event.currentTarget;
+    try {
+      const response = await fetch(`/api/courses/${courseId}/students`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ importText: String(new FormData(form).get("importText") ?? "") }),
+      });
+      if (!response.ok) throw new Error(await readError(response));
+      form.reset();
+      router.refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not import the roster.");
+    } finally {
+      setPending(false);
+    }
+  }
+
+  return (
+    <form onSubmit={onSubmit} className="space-y-3">
+      <label className="block">
+        <span className="field-label">Import students (one name per line)</span>
+        <textarea className="field min-h-28" name="importText" placeholder="Alex Chen&#10;Jordan Lee" />
+      </label>
+      {error ? <p className="text-sm text-pen">{error}</p> : null}
+      <button className="btn btn-ghost" type="submit" disabled={pending}>
+        {pending ? "Importing…" : "Import students"}
+      </button>
     </form>
   );
 }

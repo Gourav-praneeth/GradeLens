@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Mono, Libre_Franklin, Source_Serif_4 } from "next/font/google";
-import { AppSidebar } from "@/components/AppSidebar";
+import { TopBar } from "@/components/TopBar";
 import { getCurrentUser } from "@/lib/auth";
 import "./globals.css";
 
@@ -22,7 +22,7 @@ const plex = IBM_Plex_Mono({
 
 export const metadata: Metadata = {
   title: "GradeLens",
-  description: "Upload questions and solutions, generate a rubric, and grade with explained deductions.",
+  description: "A professional workspace for instructors to run courses and grade with explained deductions.",
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
@@ -33,13 +33,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <body className="min-h-screen font-sans antialiased">
         {user ? (
           <div className="app-shell">
-            <AppSidebar user={user} />
-            <div className="min-w-0 flex-1">
-              <main className="mx-auto max-w-5xl px-4 py-6 sm:px-8">{children}</main>
-            </div>
+            <TopBar user={user} search={{ action: "/", placeholder: "Search courses" }} />
+            {children}
           </div>
         ) : (
-          <main className="min-h-screen px-4">{children}</main>
+          children
         )}
       </body>
     </html>

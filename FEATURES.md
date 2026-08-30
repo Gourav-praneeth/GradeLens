@@ -26,6 +26,9 @@ Living list of what is built and what should come next. Update this file wheneve
 - Submission names match the course roster when filenames look like student names
 - Class-wide review of similar deductions and a score distribution
 - Export for Canvas and Gradescope in addition to the GradeLens roster CSV
+- Courses dashboard as the post-login home, with a course workspace sidebar
+- Course overview, gradebook, roster profiles, calendar, and analytics
+- Login branding, remember me, and honest SSO / password-reset states
 
 ## Later
 

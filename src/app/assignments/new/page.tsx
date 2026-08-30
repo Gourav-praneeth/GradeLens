@@ -25,10 +25,10 @@ export default async function NewAssignmentPage({ searchParams }: PageProps) {
   }));
 
   return (
-    <div className="space-y-5">
+    <div className="page-wrap space-y-5">
       <div>
         <Link href="/" className="text-sm text-muted hover:text-ink hover:underline">
-          Assignments
+          Courses
         </Link>
         <h1 className="mt-2 text-2xl font-semibold tracking-tight">New assignment</h1>
         <p className="mt-1 text-sm text-muted">Choose a course, then add questions and official solutions.</p>

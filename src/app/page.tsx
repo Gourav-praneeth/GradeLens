@@ -1,91 +1,101 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
-import { courseDisplayName } from "@/lib/courseName";
 import { prisma } from "@/lib/db";
-import { formatPoints } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
 
-export default async function HomePage() {
+type PageProps = { searchParams: Promise<{ q?: string }> };
+
+export default async function CoursesDashboard({ searchParams }: PageProps) {
   const user = await getCurrentUser();
   if (!user) redirect("/login");
+  const { q } = await searchParams;
+  const query = q?.trim().toLowerCase() ?? "";
 
-  const assignments = await prisma.assignment.findMany({
-    where: { course: { members: { some: { userId: user.id } } } },
-    orderBy: { createdAt: "desc" },
+  const memberships = await prisma.courseMember.findMany({
+    where: { userId: user.id },
     include: {
-      course: true,
-      rubric: { include: { criteria: true } },
-      submissions: { include: { gradeResult: true } },
+      course: {
+        include: {
+          _count: { select: { assignments: true, students: true } },
+          members: { include: { user: true } },
+        },
+      },
     },
+    orderBy: { course: { name: "asc" } },
+  });
+
+  const visible = memberships.filter((row) => {
+    if (!query) return true;
+    const hay = `${row.course.name} ${row.course.code ?? ""} ${row.course.semester ?? ""}`.toLowerCase();
+    return hay.includes(query);
   });
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Assignments</h1>
-        <p className="mt-1 text-sm text-muted">Create an assignment, save a rubric, then grade submissions.</p>
+    <div className="page-wrap space-y-6">
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <h1 className="font-read text-3xl font-semibold tracking-tight">Courses</h1>
+          <p className="mt-1 text-sm text-muted">Open a course to grade, manage the roster, and review the gradebook.</p>
+        </div>
+        <Link href="/courses/new" className="btn btn-primary">
+          + Add course
+        </Link>
       </div>
 
-      {assignments.length === 0 ? (
-        <section className="card px-6 py-12 sm:px-10">
-          <p className="text-lg font-semibold">No assignments yet</p>
-          <p className="mt-2 max-w-lg text-sm text-muted">
-            Add a course, then file questions and official solutions. GradeLens drafts a rubric and scores each submission.
+      {visible.length === 0 ? (
+        <section className="card px-6 py-12">
+          <p className="text-lg font-semibold">{query ? "No matching courses" : "No courses yet"}</p>
+          <p className="mt-2 text-sm text-muted">
+            {query ? "Try another search." : "Create a course, then add staff, a roster, and assignments."}
           </p>
-          <div className="mt-5 flex flex-wrap gap-3">
-            <Link href="/courses/new" className="btn btn-ghost">
-              New course
-            </Link>
-            <Link href="/assignments/new" className="btn btn-primary">
-              New assignment
+          <div className="mt-5">
+            <Link href="/courses/new" className="btn btn-primary">
+              + Add course
             </Link>
           </div>
         </section>
       ) : (
-        <section className="card overflow-hidden">
-          <div className="hidden grid-cols-[minmax(0,1.4fr)_8rem_8rem_7rem] gap-4 border-b border-line px-5 py-3 text-xs font-semibold text-muted sm:grid">
-            <span>Assignment</span>
-            <span>Rubric</span>
-            <span>Progress</span>
-            <span className="text-right">Points</span>
-          </div>
-          <ul>
-            {assignments.map((assignment) => {
-              const possible = assignment.rubric?.criteria.reduce((sum, row) => sum + row.maxPoints, 0) ?? 0;
-              const graded = assignment.submissions.filter((item) => item.gradeResult).length;
-              return (
-                <li key={assignment.id} className="border-b border-line last:border-b-0">
-                  <Link
-                    href={`/assignments/${assignment.id}`}
-                    className="grid gap-1 px-5 py-4 transition hover:bg-canvas sm:grid-cols-[minmax(0,1.4fr)_8rem_8rem_7rem] sm:items-center sm:gap-4"
-                  >
-                    <div className="min-w-0">
-                      <p className="truncate font-semibold">{assignment.title}</p>
-                      <p className="text-sm text-muted">{courseDisplayName(assignment)}</p>
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          {visible.map((row) => {
+            const owner = row.course.members.find((member) => member.role === "owner");
+            const published = row.course._count.assignments;
+            return (
+              <article key={row.course.id} className="card course-card" style={{ ["--course-accent" as string]: row.course.accent }}>
+                <div className="course-card-stripe" />
+                <div className="flex flex-1 flex-col px-5 py-5">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-muted">
+                    {row.course.code || "No code"}
+                  </p>
+                  <h2 className="mt-1 text-lg font-semibold">{row.course.name}</h2>
+                  <p className="mt-2 text-sm text-muted">
+                    {row.course.semester || "Semester not set"} · {owner?.user.name ?? user.name}
+                  </p>
+                  <dl className="mt-4 grid grid-cols-2 gap-2 text-sm">
+                    <div>
+                      <dt className="text-muted">Students</dt>
+                      <dd className="font-mono tabular-nums">{row.course._count.students}</dd>
                     </div>
-                    <p className="text-sm">
-                      {assignment.rubric ? (
-                        <span className="status status-ok">Ready</span>
-                      ) : (
-                        <span className="status">Needs rubric</span>
-                      )}
-                    </p>
-                    <p className="text-sm text-muted">
-                      {assignment.submissions.length === 0
-                        ? "No submissions"
-                        : `${graded} of ${assignment.submissions.length} graded`}
-                    </p>
-                    <p className="font-mono text-sm tabular-nums text-mark sm:text-right">
-                      {assignment.rubric ? `${formatPoints(possible)} pts` : "—"}
-                    </p>
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
-        </section>
+                    <div>
+                      <dt className="text-muted">Assignments</dt>
+                      <dd className="font-mono tabular-nums">{published}</dd>
+                    </div>
+                  </dl>
+                  <p className="mt-3 text-sm">
+                    <span className="status">{row.course.status === "archived" ? "Archived" : "Active"}</span>
+                    <span className="ml-2 text-muted">{row.role === "owner" ? "Owner" : "TA"}</span>
+                  </p>
+                  <div className="mt-5">
+                    <Link href={`/courses/${row.course.id}`} className="btn btn-primary">
+                      Open course
+                    </Link>
+                  </div>
+                </div>
+              </article>
+            );
+          })}
+        </div>
       )}
     </div>
   );

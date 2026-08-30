@@ -45,6 +45,14 @@ export default async function SubmissionPage({ params }: PageProps) {
     : [];
   const hasText = Boolean(submission.extractedText.trim());
   const canGrade = Boolean(submission.assignment.rubric) && hasText;
+  const siblings = await prisma.submission.findMany({
+    where: { assignmentId: id },
+    orderBy: { createdAt: "asc" },
+    select: { id: true },
+  });
+  const index = siblings.findIndex((item) => item.id === sid);
+  const previous = index > 0 ? siblings[index - 1] : null;
+  const next = index >= 0 && index < siblings.length - 1 ? siblings[index + 1] : null;
 
   return (
     <div className="space-y-5">
@@ -66,6 +74,18 @@ export default async function SubmissionPage({ params }: PageProps) {
             {formatScore(submission.gradeResult.totalAwarded, submission.gradeResult.totalPossible)}
             <small>{scores.some((score) => score.overrideNote) ? "Override" : "Graded"}</small>
           </p>
+        ) : null}
+      </div>
+      <div className="flex flex-wrap gap-2">
+        {previous ? (
+          <Link href={`/assignments/${id}/submissions/${previous.id}`} className="btn btn-ghost">
+            Previous student
+          </Link>
+        ) : null}
+        {next ? (
+          <Link href={`/assignments/${id}/submissions/${next.id}`} className="btn btn-ghost">
+            Next student
+          </Link>
         ) : null}
       </div>
 

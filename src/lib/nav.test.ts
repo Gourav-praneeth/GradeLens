@@ -3,6 +3,7 @@ import { assignmentPathState, coursePathState, isCoursesHome, isNewAssignment } 
 
 describe("nav", () => {
   it("marks courses home", () => {
+    expect(isCoursesHome("/")).toBe(true);
     expect(isCoursesHome("/courses")).toBe(true);
   });
 

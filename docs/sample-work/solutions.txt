@@ -1,0 +1,35 @@
+Official solutions — CSE 230 Assignment 1 (3 points)
+
+CPU time = IC × CPI × clock cycle time, or CPU time = IC × CPI / f.
+
+Question 1 (a) — 0.5 points
+IC = 520 × 10^6 instructions.
+
+Alpha: T_A = 520e6 × 1.8 / 4.6e9 = 0.2035 s
+Beta:  T_B = 520e6 × 1.3 / 5.2e9 = 0.1300 s
+
+Beta is faster. Speedup = T_A / T_B = 0.2035 / 0.1300 ≈ 1.565 (about 1.57× faster).
+
+Full credit: compute both times (or equivalent performance), name Beta as faster, and report the speedup with units/steps.
+
+Question 1 (b) — 1.5 points
+Want 12% less time ⇒ T' = 0.88 T. CPI' = 1.18 CPI. IC unchanged.
+T' = IC × CPI' / f'  ⇒  f' = IC × 1.18 CPI / (0.88 T) = (1.18 / 0.88) × (IC × CPI / T) = 1.3409 f
+
+Alpha: f'_A = 1.3409 × 4.6 GHz ≈ 6.17 GHz
+Beta:  f'_B = 1.3409 × 5.2 GHz ≈ 6.97 GHz
+
+Full credit: apply both the 12% time reduction and the 18% CPI increase, and report both new frequencies.
+
+Question 2 (a) — 0.5 points
+Instruction mix: 8 ALU + 3 uncond + 6 cond + 4 data = 21 instructions.
+Clock cycles = 8(1) + 3(2) + 6(3) + 4(4) = 8 + 6 + 18 + 16 = 48
+CPI = 48 / 21 ≈ 2.286
+
+Full credit: total cycles, instruction count, and CPI.
+
+Question 2 (b) — 0.5 points
+Performance = f / CPI = 4.8e9 / 2.286 ≈ 2.10 × 10^9 instructions per second
+(or execution time for this workload: T = 21 × 2.286 / 4.8e9 ≈ 10.0 ns).
+
+Full credit: use CPI from (a) with 4.8 GHz and report performance or time with units.

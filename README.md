@@ -2,7 +2,7 @@
 
 A local autograder for TAs and professors. Create a course, add a roster, generate a rubric from official solutions, then grade student PDFs or text with an explanation for every deduction.
 
-See [FEATURES.md](FEATURES.md) for what is shipped and what comes next.
+See [FEATURES.md](FEATURES.md) for what is shipped and what comes next. For a click-through of every feature, including sample files, see [docs/TESTING.md](docs/TESTING.md).
 
 ## Requirements
 
@@ -23,7 +23,7 @@ npx prisma migrate deploy
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) and create an instructor account.
+Open [http://localhost:3000](http://localhost:3000) and create an instructor account. After sign-in you land on the courses dashboard.
 
 ## How it works
 

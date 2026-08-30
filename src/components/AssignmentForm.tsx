@@ -61,6 +61,14 @@ export function AssignmentForm({
           </select>
         </label>
       </div>
+      <label className="block">
+        <span className="field-label">Short description</span>
+        <input className="field" name="description" placeholder="Shown on the assignment list" />
+      </label>
+      <label className="block max-w-xs">
+        <span className="field-label">Due date</span>
+        <input className="field" type="datetime-local" name="dueAt" />
+      </label>
 
       <MaterialField
         heading="Questions"

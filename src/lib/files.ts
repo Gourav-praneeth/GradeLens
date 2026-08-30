@@ -1,7 +1,10 @@
 import { mkdir, writeFile } from "fs/promises";
 import path from "path";
+import { resolveUploadRoot } from "./paths";
 
-export const UPLOAD_ROOT = path.join(process.cwd(), "uploads");
+export function uploadRoot(): string {
+  return resolveUploadRoot();
+}
 
 export async function saveUpload(
   folder: string,
@@ -10,7 +13,7 @@ export async function saveUpload(
 ): Promise<string> {
   const safeName = originalName.replace(/[^a-zA-Z0-9._-]/g, "_");
   const filename = `${Date.now()}-${safeName}`;
-  const dir = path.join(UPLOAD_ROOT, folder);
+  const dir = path.join(uploadRoot(), folder);
   await mkdir(dir, { recursive: true });
   const storedPath = path.join(dir, filename);
   await writeFile(storedPath, bytes);

@@ -5,19 +5,33 @@ import { isValidEmail, normalizeEmail } from "@/lib/identity";
 import { acceptInvitesForEmail, claimUnownedAssignments } from "@/lib/onboarding";
 import { hashPassword } from "@/lib/password";
 import { prisma } from "@/lib/db";
+import { signupAccess } from "@/lib/signupAccess";
 
 export const runtime = "nodejs";
 
 export async function POST(request: Request) {
   try {
-    const body = (await request.json()) as { name?: string; email?: string; password?: string };
+    const body = (await request.json()) as {
+      name?: string;
+      email?: string;
+      password?: string;
+      inviteCode?: string;
+    };
     const name = String(body.name ?? "").trim();
     const email = normalizeEmail(String(body.email ?? ""));
     const password = String(body.password ?? "");
+    const inviteCode = String(body.inviteCode ?? "").trim();
 
     if (!name) return jsonError("Enter your name.");
     if (!isValidEmail(email)) return jsonError("Enter a valid email address.");
     if (password.length < 8) return jsonError("Use a password with at least 8 characters.");
+
+    const [userCount, pendingInvite] = await Promise.all([
+      prisma.user.count(),
+      prisma.courseInvite.findFirst({ where: { email } }).then((row) => Boolean(row)),
+    ]);
+    const access = signupAccess({ userCount, pendingInvite, inviteCode });
+    if (!access.ok) return jsonError(access.message);
 
     const existing = await prisma.user.findUnique({ where: { email } });
     if (existing) return jsonError("An account with that email already exists.");

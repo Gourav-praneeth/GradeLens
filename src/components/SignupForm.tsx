@@ -22,6 +22,7 @@ export function SignupForm() {
           name: String(form.get("name") ?? ""),
           email: String(form.get("email") ?? ""),
           password: String(form.get("password") ?? ""),
+          inviteCode: String(form.get("inviteCode") ?? ""),
         }),
       });
       if (!response.ok) throw new Error(await readError(response));
@@ -48,6 +49,13 @@ export function SignupForm() {
         <span className="field-label">Password</span>
         <input className="field" name="password" type="password" required minLength={8} autoComplete="new-password" />
       </label>
+      <label className="block">
+        <span className="field-label">Invite code (optional)</span>
+        <input className="field" name="inviteCode" autoComplete="off" placeholder="If a colleague gave you one" />
+      </label>
+      <p className="text-xs text-muted">
+        Invited TAs can skip the code and use the same email the course owner added.
+      </p>
       {error ? <p className="text-sm text-pen">{error}</p> : null}
       <button className="btn btn-primary" type="submit" disabled={pending}>
         {pending ? "Creating account…" : "Create account"}

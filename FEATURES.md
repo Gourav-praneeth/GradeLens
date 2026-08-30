@@ -29,11 +29,11 @@ Living list of what is built and what should come next. Update this file wheneve
 - Courses dashboard as the post-login home, with a course workspace sidebar
 - Course overview, gradebook, roster profiles, calendar, and analytics
 - Login branding, remember me, and honest SSO / password-reset states
+- Production hosting with persistent SQLite and uploads, plus invite-only signup on a public URL
 
 ## Later
 
 - Photo and scan upload with handwriting OCR
-- Production hosting and file storage
 
 ## Ideas
 

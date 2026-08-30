@@ -34,6 +34,7 @@ Optional: `npm test` runs unit tests (roster matching, CSV export, point parsing
 - Duplicate email: “An account with that email already exists.”
 - Logged-in visits to `/login` or `/signup` redirect home.
 - Logged-out visits to `/` or `/courses` redirect to login.
+- On a production deploy, a second uninvited signup is rejected unless `SIGNUP_INVITE` or `ALLOW_SIGNUP=true` is set. Invited TA emails still work.
 
 ### Log in and log out
 

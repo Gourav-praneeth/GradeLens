@@ -1,0 +1,15 @@
+node_modules
+.next
+.git
+.gitignore
+uploads
+prisma/*.db
+prisma/*.db-journal
+.env
+.env.*
+!.env.example
+*.md
+docs
+.cursor
+.DS_Store
+coverage

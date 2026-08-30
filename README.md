@@ -25,6 +25,25 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) and create an instructor account. After sign-in you land on the courses dashboard.
 
+## Deploy
+
+The app is a long-running Node server with SQLite and uploaded files on disk. **Railway** (or any host that can run the Dockerfile with a persistent volume) is the intended production setup. Do not use a serverless host with an ephemeral filesystem.
+
+1. Create a Railway project from this repo. It will build the `Dockerfile`.
+2. Add a volume and mount it at `/data`.
+3. Set `GROQ_API_KEY` (or another LLM key). The container defaults `DATABASE_URL` and `UPLOAD_DIR` under `/data`.
+4. Optional: `SIGNUP_INVITE` so extra instructors can join without a course staff invite. `ALLOW_SIGNUP=true` opens signup to anyone with the URL (they can create courses and use your API key).
+5. Deploy, open the HTTPS URL, and create the **first** account. After that, production signup is limited to invited staff emails, a matching invite code, or `ALLOW_SIGNUP=true`.
+
+Use **fake student work** on a public URL. The model is a first pass; keep a human in the loop before scores are official.
+
+A container with a volume at `/data` also works on Fly.io, Render, or a VPS:
+
+```bash
+docker build -t gradelens .
+docker run --rm -p 3000:3000 -v gradelens-data:/data -e GROQ_API_KEY=... gradelens
+```
+
 ## How it works
 
 1. Sign up, then create a course (and optionally a student roster).

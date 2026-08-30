@@ -155,6 +155,7 @@ export function GradeOneButton({
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Grading failed.");
+    } finally {
       setPending(false);
     }
   }

@@ -1,0 +1,44 @@
+CSE 230 – Assignment 1
+Important: This is an individual assignment. Please do not collaborate.
+Make sure to follow the academic integrity policies. Using work done by someone else or AI will
+be considered a violation of the academic integrity and will result in a report to the AIO. Your
+work should not match with anything found online.
+Copying any part of this assignment, and providing them to another person or posting them on
+the Internet without a permission of the instructor will be a violation of its copyright.
+http://www.asu.edu/copyright/
+Show all the steps including formulas, calculations and Units to receive full credit.
+There are 2 questions worth a total of 3 points.
+Question 1:
+A technology company is evaluating two processors for a new real-time image-processing
+application. During testing, the application executes approximately 520 million machine
+instructions to process a standard workload.
+The engineering team tests the application on two prototype processors. Processor Alpha
+operates at 4.6 GHz and requires an average of 1.8 clock cycles to complete an instruction.
+Processor Beta operates at 5.2 GHz and completes an instruction in an average of 1.3 clock cycles.
+(a) The engineering team wants to select the processor that completes the image-processing
+workload sooner. Compare the performance of the two processors and determine how much
+faster the better-performing processor is than the other. (0.5 points)
+(b) Before making the final selection, the design team proposes modifying the processor's
+instruction set architecture (ISA). Simulations indicate that the modification could allow the same
+workload to be completed in 12% less time. However, the added complexity of the new ISA
+causes each instruction to require, on average, 18% more clock cycles. The number of instructions
+executed by the application remains unchanged.
+If the company wants to achieve the proposed 12% reduction in execution time, determine the
+clock frequency at which Processor Alpha and Processor Beta would each need to operate after
+the ISA modification. (1.5 points)
+Question 2:
+A development team is testing a processor for an autonomous navigation system. During one of
+its routine navigation calculations, the processor executes several types of machine instructions.
+Analysis of the program shows that the workload consists of 8 arithmetic/logic operations, 3
+unconditional branch operations, 6 conditional branch operations, and 4 data-transfer
+operations.
+Because these operations have different levels of complexity, they do not all require the same
+amount of processing time. An arithmetic/logic operation requires 1 clock cycle, an unconditional
+branch requires 2 clock cycles, a conditional branch requires 3 clock cycles, and a data-transfer
+operation requires 4 clock cycles.
+The navigation system executes this workload on a processor operating at a clock frequency of
+4.8 GHz.
+(a) Determine the average number of clock cycles required per instruction for this navigation
+workload. (0.5 points)
+(b) Using your result from part (a), determine the performance of the processor when executing
+this workload. (0.5 points)

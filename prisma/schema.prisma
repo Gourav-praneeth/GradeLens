@@ -1,0 +1,143 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String         @id @default(cuid())
+  email        String         @unique
+  name         String
+  passwordHash String
+  createdAt    DateTime       @default(now())
+  sessions     Session[]
+  memberships  CourseMember[]
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+}
+
+model Course {
+  id          String         @id @default(cuid())
+  name        String
+  code        String?
+  createdAt   DateTime       @default(now())
+  members     CourseMember[]
+  invites     CourseInvite[]
+  students    Student[]
+  assignments Assignment[]
+}
+
+model CourseMember {
+  id       String @id @default(cuid())
+  courseId String
+  userId   String
+  role     String
+  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([courseId, userId])
+}
+
+model CourseInvite {
+  id        String   @id @default(cuid())
+  courseId  String
+  email     String
+  role      String   @default("ta")
+  createdAt DateTime @default(now())
+  course    Course    @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([courseId, email])
+}
+
+model Student {
+  id          String       @id @default(cuid())
+  courseId    String
+  name        String
+  email       String?
+  course      Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  submissions Submission[]
+}
+
+model Assignment {
+  id            String       @id @default(cuid())
+  title         String
+  courseLabel   String?      @map("course")
+  courseId      String?
+  course        Course?      @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  questionsText String       @default("")
+  solutionsText String       @default("")
+  status        String       @default("draft")
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  rubric        Rubric?
+  submissions   Submission[]
+}
+
+model Rubric {
+  id           String            @id @default(cuid())
+  assignmentId String           @unique
+  assignment   Assignment        @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+  criteria     RubricCriterion[]
+}
+
+model RubricCriterion {
+  id                    String           @id @default(cuid())
+  rubricId              String
+  rubric                Rubric           @relation(fields: [rubricId], references: [id], onDelete: Cascade)
+  label                 String
+  maxPoints             Float
+  fullCreditDescription String
+  sortOrder             Int
+  scores                CriterionScore[]
+}
+
+model Submission {
+  id             String       @id @default(cuid())
+  assignmentId   String
+  assignment     Assignment   @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  studentId      String?
+  student        Student?     @relation(fields: [studentId], references: [id], onDelete: SetNull)
+  studentLabel   String
+  originalName   String
+  storedPath     String
+  extractedText  String       @default("")
+  extractWarning String?
+  status         String       @default("uploaded")
+  createdAt      DateTime     @default(now())
+  gradeResult    GradeResult?
+}
+
+model GradeResult {
+  id            String           @id @default(cuid())
+  submissionId  String           @unique
+  submission    Submission       @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  totalAwarded  Float
+  totalPossible Float
+  summary       String?
+  createdAt     DateTime         @default(now())
+  scores        CriterionScore[]
+}
+
+model CriterionScore {
+  id                 String          @id @default(cuid())
+  gradeResultId      String
+  gradeResult        GradeResult      @relation(fields: [gradeResultId], references: [id], onDelete: Cascade)
+  criterionId        String
+  criterion          RubricCriterion  @relation(fields: [criterionId], references: [id], onDelete: Cascade)
+  pointsAwarded      Float
+  modelPointsAwarded Float            @default(0)
+  overrideNote       String?
+  deductionReason    String
+  evidenceQuote      String?
+}

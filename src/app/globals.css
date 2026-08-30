@@ -427,12 +427,78 @@ a {
   width: auto;
 }
 
-.course-rail-head,
-.course-rail-foot {
+.course-rail-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 0.75rem;
+  gap: 0.5rem;
+}
+
+.course-rail.is-collapsed .course-rail-head {
+  justify-content: center;
+}
+
+.rail-toggle {
+  display: inline-flex;
+  width: 2.1rem;
+  height: 2.1rem;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--color-line);
+  border-radius: 8px;
+  background: var(--color-surface);
+  color: var(--color-ink);
+}
+
+.rail-chevron {
+  display: inline-flex;
+}
+
+.rail-chevron.is-flipped {
+  display: inline-flex;
+  transform: scaleX(-1);
+}
+
+.rail-link {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  min-height: 2.35rem;
+  padding: 0.4rem 0.65rem;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--color-ink);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.rail-link:hover {
+  background: var(--color-canvas);
+}
+
+.rail-icon {
+  flex-shrink: 0;
+}
+
+.course-rail.is-collapsed .rail-text,
+.course-rail.is-collapsed .rail-label {
+  display: none;
+}
+
+.course-rail.is-collapsed .rail-link {
+  justify-content: center;
+  padding: 0.55rem;
+}
+
+.rail-rule {
+  height: 1px;
+  margin: 0.55rem 0.35rem;
+  background: var(--color-line);
 }
 
 .course-rail-nav {
@@ -440,6 +506,12 @@ a {
   flex-direction: column;
   gap: 0.15rem;
   margin: 1rem 0;
+}
+
+.course-rail-foot {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
 }
 
 .rail-label {

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { RailIcon, railIconFor } from "@/components/RailIcons";
 import { courseWorkspaceNav, activeCourseSection } from "@/lib/nav";
 
 export function CourseSidebar({
@@ -13,6 +14,7 @@ export function CourseSidebar({
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
   const items = courseWorkspaceNav(course.id);
+  const section = activeCourseSection(pathname, course.id);
 
   return (
     <aside className={`course-rail ${collapsed ? "is-collapsed" : ""}`} style={{ ["--course-accent" as string]: course.accent }}>
@@ -23,8 +25,15 @@ export function CourseSidebar({
             <p className="truncate font-semibold">{course.code || course.name}</p>
           </div>
         ) : null}
-        <button type="button" className="icon-btn" onClick={() => setCollapsed((value) => !value)}>
-          {collapsed ? "Expand" : "Collapse"}
+        <button
+          type="button"
+          className="rail-toggle"
+          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          onClick={() => setCollapsed((value) => !value)}
+        >
+          <span className={collapsed ? "rail-chevron is-flipped" : "rail-chevron"}>
+            <RailIcon name="panel" />
+          </span>
         </button>
       </div>
       <nav className="course-rail-nav" aria-label="Course">
@@ -32,40 +41,48 @@ export function CourseSidebar({
           <Link
             key={item.href}
             href={item.href}
-            className={`nav-item${activeCourseSection(pathname, course.id) === item.id ? " nav-item-active" : ""}`}
+            className={`rail-link${section === item.id ? " nav-item-active" : ""}`}
             title={item.label}
+            aria-current={section === item.id ? "page" : undefined}
           >
-            {collapsed ? item.label.slice(0, 1) : item.label}
+            <RailIcon name={railIconFor[item.id]} />
+            <span className="rail-text">{item.label}</span>
           </Link>
         ))}
-        <p className="rail-label">{collapsed ? "Mgmt" : "Course management"}</p>
+        {collapsed ? <div className="rail-rule" /> : <p className="rail-label">Course management</p>}
         {items.management.map((item) => (
           <Link
             key={item.href}
             href={item.href}
-            className={`nav-item${activeCourseSection(pathname, course.id) === item.id ? " nav-item-active" : ""}`}
+            className={`rail-link${section === item.id ? " nav-item-active" : ""}`}
             title={item.label}
+            aria-current={section === item.id ? "page" : undefined}
           >
-            {collapsed ? item.label.slice(0, 1) : item.label}
+            <RailIcon name={railIconFor[item.id]} />
+            <span className="rail-text">{item.label}</span>
           </Link>
         ))}
       </nav>
       <div className="course-rail-foot">
-        <Link href="/help" className="nav-item">
-          {collapsed ? "?" : "Help / Documentation"}
+        <Link href="/help" className="rail-link" title="Help / Documentation">
+          <RailIcon name="help" />
+          <span className="rail-text">Help / Documentation</span>
         </Link>
-        <Link href="/account" className="nav-item">
-          {collapsed ? "A" : "Account"}
+        <Link href="/account" className="rail-link" title="Account">
+          <RailIcon name="account" />
+          <span className="rail-text">Account</span>
         </Link>
         <button
-          className="nav-item w-full text-left font-normal"
+          className="rail-link w-full"
           type="button"
+          title="Sign out"
           onClick={async () => {
             await fetch("/api/auth/logout", { method: "POST" });
             window.location.href = "/login";
           }}
         >
-          {collapsed ? "X" : "Sign out"}
+          <RailIcon name="signout" />
+          <span className="rail-text">Sign out</span>
         </button>
       </div>
     </aside>

@@ -33,5 +33,5 @@ export async function POST(request: Request) {
   const item = await prisma.feedback.create({
     data: { userId: auth.user.id, message, page },
   });
-  return NextResponse.json({ ok: true, id: item.id });
+  return NextResponse.json({ ok: true });
 }

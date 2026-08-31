@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { IBM_Plex_Mono, Libre_Franklin, Source_Serif_4 } from "next/font/google";
 import { TopBar } from "@/components/TopBar";
 import { getCurrentUser } from "@/lib/auth";
+import { isSiteOperator } from "@/lib/siteOperator";
 import "./globals.css";
 
 const franklin = Libre_Franklin({
@@ -27,13 +28,14 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const user = await getCurrentUser();
+  const isAdmin = user ? await isSiteOperator(user) : false;
 
   return (
     <html lang="en" className={`${franklin.variable} ${literata.variable} ${plex.variable}`}>
       <body className="min-h-screen font-sans antialiased">
         {user ? (
           <div className="app-shell">
-            <TopBar user={user} search={{ action: "/", placeholder: "Search courses" }} />
+            <TopBar user={user} isAdmin={isAdmin} search={{ action: "/", placeholder: "Search courses" }} />
             {children}
           </div>
         ) : (

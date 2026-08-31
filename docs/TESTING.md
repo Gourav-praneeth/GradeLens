@@ -66,8 +66,8 @@ If email is not configured, the page explains that this server cannot send mail.
 ### Feedback
 
 1. In the course sidebar, **Feedback** is above **Account**.
-2. Describe the issue (at least 10 characters) and **Send feedback**.
-3. The first GradeLens account (or `FEEDBACK_ADMIN_EMAIL`) also sees an **Inbox** of every report, with Mark done.
+2. Describe the issue (at least 10 characters) and **Send feedback**. Other users never see that note.
+3. Only the first GradeLens account (or `FEEDBACK_ADMIN_EMAIL`) can open **Inbox** / `/admin/feedback` and mark items done.
 
 ---
 

@@ -31,7 +31,7 @@ Living list of what is built and what should come next. Update this file wheneve
 - Login branding, remember me, email verification, and password reset by email
 - Production hosting with persistent SQLite and uploads, plus invite-only signup on a public URL
 - Personal Groq, OpenAI, or Anthropic API keys in Account settings (encrypted at rest; server .env is a fallback)
-- In-app feedback from the course sidebar, with an inbox for the first account (or FEEDBACK_ADMIN_EMAIL)
+- In-app feedback: instructors send a private note; only the site admin can read the inbox
 
 ## Later
 

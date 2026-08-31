@@ -5,7 +5,7 @@ import { useState } from "react";
 import type { AuthUser } from "@/lib/auth";
 import { initials } from "@/lib/display";
 
-export function UserMenu({ user }: { user: AuthUser }) {
+export function UserMenu({ user, isAdmin = false }: { user: AuthUser; isAdmin?: boolean }) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -26,6 +26,11 @@ export function UserMenu({ user }: { user: AuthUser }) {
           <Link href="/feedback" className="nav-item" onClick={() => setOpen(false)}>
             Feedback
           </Link>
+          {isAdmin ? (
+            <Link href="/admin/feedback" className="nav-item" onClick={() => setOpen(false)}>
+              Inbox
+            </Link>
+          ) : null}
           <Link href="/account" className="nav-item" onClick={() => setOpen(false)}>
             Account
           </Link>

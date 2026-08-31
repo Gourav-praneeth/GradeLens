@@ -9,6 +9,7 @@ type IconName =
   | "settings"
   | "help"
   | "feedback"
+  | "inbox"
   | "account"
   | "signout"
   | "panel";
@@ -75,6 +76,12 @@ export function RailIcon({ name }: { name: IconName }) {
         <>
           <path d="M5 6.5h14v10.2H9.2L5 20.2V6.5z" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
           <path d="M8.5 10.2h7M8.5 13.4h5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+        </>
+      ) : null}
+      {name === "inbox" ? (
+        <>
+          <path d="M4.5 8h15v11h-15z" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
+          <path d="M4.5 8 12 13.5 19.5 8" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
         </>
       ) : null}
       {name === "account" ? (

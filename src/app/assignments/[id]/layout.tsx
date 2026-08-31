@@ -3,6 +3,7 @@ import { CourseWorkspace } from "@/components/CourseWorkspace";
 import { getCurrentUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { requirePageAssignment } from "@/lib/pageAuth";
+import { isSiteOperator } from "@/lib/siteOperator";
 import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
@@ -23,6 +24,7 @@ export default async function AssignmentLayout({
     include: { course: true },
   });
   if (!assignment?.course) notFound();
+  const isAdmin = await isSiteOperator(user);
 
   return (
     <CourseWorkspace
@@ -32,6 +34,7 @@ export default async function AssignmentLayout({
         code: assignment.course.code,
         accent: assignment.course.accent,
       }}
+      isAdmin={isAdmin}
     >
       {children}
     </CourseWorkspace>

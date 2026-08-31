@@ -5,9 +5,11 @@ import type { AuthUser } from "@/lib/auth";
 
 export function TopBar({
   user,
+  isAdmin = false,
   search,
 }: {
   user: AuthUser;
+  isAdmin?: boolean;
   search?: { action: string; query?: string; placeholder?: string };
 }) {
   return (
@@ -36,7 +38,7 @@ export function TopBar({
         <Link href="/account" className="icon-btn">
           Settings
         </Link>
-        <UserMenu user={user} />
+        <UserMenu user={user} isAdmin={isAdmin} />
       </div>
     </header>
   );

@@ -3,6 +3,7 @@ import { CourseWorkspace } from "@/components/CourseWorkspace";
 import { getCurrentUser } from "@/lib/auth";
 import { getCourseMembership } from "@/lib/access";
 import { prisma } from "@/lib/db";
+import { isSiteOperator } from "@/lib/siteOperator";
 import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
@@ -21,10 +22,12 @@ export default async function CourseLayout({
   if (!member) notFound();
   const course = await prisma.course.findUnique({ where: { id } });
   if (!course) notFound();
+  const isAdmin = await isSiteOperator(user);
 
   return (
     <CourseWorkspace
       course={{ id: course.id, name: course.name, code: course.code, accent: course.accent }}
+      isAdmin={isAdmin}
     >
       {children}
     </CourseWorkspace>

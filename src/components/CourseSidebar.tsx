@@ -8,8 +8,10 @@ import { courseWorkspaceNav, activeCourseSection } from "@/lib/nav";
 
 export function CourseSidebar({
   course,
+  isAdmin = false,
 }: {
   course: { id: string; name: string; code: string | null; accent: string };
+  isAdmin?: boolean;
 }) {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
@@ -72,6 +74,12 @@ export function CourseSidebar({
           <RailIcon name="feedback" />
           <span className="rail-text">Feedback</span>
         </Link>
+        {isAdmin ? (
+          <Link href="/admin/feedback" className="rail-link" title="Feedback inbox">
+            <RailIcon name="inbox" />
+            <span className="rail-text">Inbox</span>
+          </Link>
+        ) : null}
         <Link href="/account" className="rail-link" title="Account">
           <RailIcon name="account" />
           <span className="rail-text">Account</span>

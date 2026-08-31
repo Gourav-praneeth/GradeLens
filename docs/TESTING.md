@@ -6,7 +6,7 @@ You need a running local server and at least one LLM key. See the project [READM
 
 ## Before you start
 
-1. `npm install`, copy `.env.example` to `.env`, and set `GROQ_API_KEY` (or Anthropic / OpenAI).
+1. `npm install`, copy `.env.example` to `.env`. Optionally set `GROQ_API_KEY` (or Anthropic / OpenAI) as a fallback. You can also save a personal key under **Account** after signup.
 2. `npx prisma migrate deploy` then `npm run dev`.
 3. Open [http://localhost:3000](http://localhost:3000). You should be redirected to **Sign in**.
 
@@ -40,6 +40,19 @@ Optional: `npm test` runs unit tests (roster matching, CSV export, point parsing
 
 1. Log out, then sign in at `/login` with the same email and password.
 2. Confirm you return to the assignment list.
+
+### Personal grading API key
+
+1. Open the user menu → **Settings** (or **Account**).
+2. Under **Grading API key**, choose Groq (or OpenAI / Anthropic), paste a key, and **Save API key**.
+3. The page should show a masked hint such as `••••abcd`, never the full key.
+4. Course **Settings** has a link to the same form.
+
+**Checks**
+
+- Saving with an empty key is rejected.
+- **Remove key** clears the personal key. If `.env` still has a key, grading can use that fallback.
+- A second instructor’s key is stored on their account only.
 
 ---
 
@@ -189,7 +202,7 @@ On **Submissions**, click **Grade ungraded**. It scores every remaining paper th
 **Checks**
 
 - Home page progress: `3 of 3 graded` (if you uploaded three text files).
-- Failed grading (bad or missing API key) shows **Failed** and a message to check `.env` and retry.
+- Failed grading (bad or missing API key) shows **Failed** and a link to check the key in Account settings.
 - Rate-limit errors ask you to wait and try again.
 
 ### Grade again after rubric edits

@@ -7,7 +7,7 @@ See [FEATURES.md](FEATURES.md) for what is shipped and what comes next. For a cl
 ## Requirements
 
 - Node.js 20+
-- One LLM API key: `GROQ_API_KEY` (free), `ANTHROPIC_API_KEY`, or `OPENAI_API_KEY`
+- Each instructor or TA can save their own Groq, OpenAI, or Anthropic API key in Account settings. Optionally set `GROQ_API_KEY` (free), `ANTHROPIC_API_KEY`, or `OPENAI_API_KEY` in `.env` as a shared fallback.
 
 ## Run locally
 
@@ -16,7 +16,7 @@ npm install
 cp .env.example .env
 ```
 
-Put your API key in `.env`. For local testing, create a free key at [console.groq.com](https://console.groq.com) and set `GROQ_API_KEY`. Then:
+Optionally put a fallback API key in `.env`. Instructors can also paste a personal key after sign-in under **Account**. For local testing, create a free key at [console.groq.com](https://console.groq.com). Then:
 
 ```bash
 npx prisma migrate deploy
@@ -31,8 +31,8 @@ The app is a long-running Node server with SQLite and uploaded files on disk. **
 
 1. Create a Railway project from this repo. It will build the `Dockerfile`.
 2. Add a volume and mount it at `/data`.
-3. Set `GROQ_API_KEY` (or another LLM key). The container defaults `DATABASE_URL` and `UPLOAD_DIR` under `/data`.
-4. Optional: `SIGNUP_INVITE` so extra instructors can join without a course staff invite. `ALLOW_SIGNUP=true` opens signup to anyone with the URL (they can create courses and use your API key).
+3. Optional: set `GROQ_API_KEY` (or another LLM key) as a fallback, and `LLM_KEY_SECRET` to encrypt personal keys. Instructors should save their own keys in Account settings. The container defaults `DATABASE_URL` and `UPLOAD_DIR` under `/data`.
+4. Optional: `SIGNUP_INVITE` so extra instructors can join without a course staff invite. `ALLOW_SIGNUP=true` opens signup to anyone with the URL.
 5. Deploy, open the HTTPS URL, and create the **first** account. After that, production signup is limited to invited staff emails, a matching invite code, or `ALLOW_SIGNUP=true`.
 
 Use **fake student work** on a public URL. The model is a first pass; keep a human in the loop before scores are official.
@@ -46,7 +46,7 @@ docker run --rm -p 3000:3000 -v gradelens-data:/data -e GROQ_API_KEY=... gradele
 
 ## How it works
 
-1. Sign up, then create a course (and optionally a student roster).
+1. Sign up, save your Groq, OpenAI, or Anthropic key under **Account**, then create a course (and optionally a student roster).
 2. Create an assignment in that course and add questions plus official solutions (paste or PDF).
 3. Generate a rubric, then edit criteria and point values.
 4. Upload student work as PDF or `.txt`. Filenames like `alex-chen.pdf` match roster names.

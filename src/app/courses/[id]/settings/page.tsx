@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { CourseForm } from "@/components/CourseForm";
 import { getCourseMembership, isOwner } from "@/lib/access";
@@ -37,6 +38,16 @@ export default async function CourseSettingsPage({ params }: PageProps) {
       ) : (
         <p className="text-sm text-muted">Only the owner can change course settings.</p>
       )}
+      <section className="card px-5 py-6">
+        <h2 className="font-semibold">Grading API key</h2>
+        <p className="mt-2 text-sm text-muted">
+          Each instructor and TA uses their own Groq, OpenAI, or Anthropic key. It is saved on your account,
+          not on this course.
+        </p>
+        <Link href="/account#grading-key" className="mt-4 inline-block text-sm underline">
+          Open account settings
+        </Link>
+      </section>
     </div>
   );
 }

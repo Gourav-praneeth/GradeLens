@@ -94,7 +94,11 @@ export default async function SubmissionPage({ params }: PageProps) {
       <section className="card px-5 py-5 sm:px-6">
         {submission.status === "failed" ? (
           <p className="text-pen">
-            Grading failed. The model may be unavailable. Check the API key, then try Grade again.
+            Grading failed. The model may be unavailable.{" "}
+            <Link href="/account#grading-key" className="underline">
+              Check your API key
+            </Link>
+            , then try Grade again.
           </p>
         ) : submission.gradeResult?.summary ? (
           <p>{submission.gradeResult.summary}</p>

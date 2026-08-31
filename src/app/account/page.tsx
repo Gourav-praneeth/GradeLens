@@ -1,12 +1,15 @@
 import { redirect } from "next/navigation";
+import { LlmKeyForm } from "@/components/LlmKeyForm";
 import { LogoutButton } from "@/components/LogoutButton";
 import { getCurrentUser } from "@/lib/auth";
+import { llmKeyStatus } from "@/lib/llmKeys";
 
 export const dynamic = "force-dynamic";
 
 export default async function AccountPage() {
   const user = await getCurrentUser();
   if (!user) redirect("/login");
+  const llm = await llmKeyStatus(user.id);
 
   return (
     <div className="page-wrap space-y-5">
@@ -17,6 +20,9 @@ export default async function AccountPage() {
         <div className="mt-5 max-w-xs">
           <LogoutButton />
         </div>
+      </section>
+      <section className="card px-5 py-6">
+        <LlmKeyForm initial={llm} />
       </section>
     </div>
   );

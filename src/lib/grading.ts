@@ -1,7 +1,8 @@
 import { prisma } from "./db";
 import { gradeSubmission } from "./llm";
+import { resolveLlmCredentials } from "./llmKeys";
 
-export async function runGrading(submissionId: string) {
+export async function runGrading(submissionId: string, userId: string) {
   const submission = await prisma.submission.findUnique({
     where: { id: submissionId },
     include: {
@@ -39,18 +40,22 @@ export async function runGrading(submissionId: string) {
   });
 
   try {
-    const draft = await gradeSubmission({
-      title: submission.assignment.title,
-      questionsText: submission.assignment.questionsText,
-      solutionsText: submission.assignment.solutionsText,
-      studentText: submission.extractedText,
-      criteria: criteria.map((criterion) => ({
-        id: criterion.id,
-        label: criterion.label,
-        maxPoints: criterion.maxPoints,
-        fullCreditDescription: criterion.fullCreditDescription,
-      })),
-    });
+    const credentials = await resolveLlmCredentials(userId);
+    const draft = await gradeSubmission(
+      {
+        title: submission.assignment.title,
+        questionsText: submission.assignment.questionsText,
+        solutionsText: submission.assignment.solutionsText,
+        studentText: submission.extractedText,
+        criteria: criteria.map((criterion) => ({
+          id: criterion.id,
+          label: criterion.label,
+          maxPoints: criterion.maxPoints,
+          fullCreditDescription: criterion.fullCreditDescription,
+        })),
+      },
+      credentials,
+    );
 
     const totalAwarded = draft.scores.reduce((sum, score) => sum + score.pointsAwarded, 0);
     const totalPossible = criteria.reduce((sum, criterion) => sum + criterion.maxPoints, 0);

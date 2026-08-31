@@ -30,6 +30,7 @@ Living list of what is built and what should come next. Update this file wheneve
 - Course overview, gradebook, roster profiles, calendar, and analytics
 - Login branding, remember me, and honest SSO / password-reset states
 - Production hosting with persistent SQLite and uploads, plus invite-only signup on a public URL
+- Personal Groq, OpenAI, or Anthropic API keys in Account settings (encrypted at rest; server .env is a fallback)
 
 ## Later
 

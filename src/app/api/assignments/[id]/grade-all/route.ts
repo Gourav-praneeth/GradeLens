@@ -43,7 +43,7 @@ export async function POST(_request: Request, context: RouteContext) {
 
   for (const submission of pending) {
     try {
-      await runGrading(submission.id);
+      await runGrading(submission.id, access.user.id);
       graded += 1;
     } catch (error) {
       const message = llmUserMessage(error);

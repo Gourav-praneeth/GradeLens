@@ -22,7 +22,7 @@ export async function POST(_request: Request, context: RouteContext) {
   }
 
   try {
-    await runGrading(sid);
+    await runGrading(sid, access.user.id);
     return NextResponse.json({ ok: true });
   } catch (error) {
     const message = llmUserMessage(error);

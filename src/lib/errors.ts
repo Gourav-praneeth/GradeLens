@@ -9,7 +9,7 @@ export function llmUserMessage(error: unknown): string {
     lower.includes("invalid api key") ||
     lower.includes("401")
   ) {
-    return "The grading model is unavailable. Check the API key environment variable and restart the server.";
+    return "The grading model is unavailable. Check your API key in Account settings and try again.";
   }
 
   if (lower.includes("429") || lower.includes("rate limit")) {

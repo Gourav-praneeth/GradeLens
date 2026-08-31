@@ -3,26 +3,20 @@ import OpenAI from "openai";
 import { parseJsonObject } from "./json";
 import { applyStatedPoints, parseStatedPoints, statedPointsPromptBlock } from "./points";
 import { assembleGradeScores, cleanRubricCriteria } from "./rubricDraft";
+import type { LlmCredentials } from "./llmProviders";
 import type { GradeDraftScore, RubricDraftCriterion } from "./types";
 
 export type { GradeDraftScore, RubricDraftCriterion };
 
-type LlmProvider = "groq" | "anthropic" | "openai";
+async function completeJson(
+  credentials: LlmCredentials,
+  system: string,
+  user: string,
+): Promise<Record<string, unknown>> {
+  const { provider, apiKey } = credentials;
 
-function provider(): LlmProvider {
-  if (process.env.GROQ_API_KEY?.trim()) return "groq";
-  if (process.env.ANTHROPIC_API_KEY?.trim()) return "anthropic";
-  if (process.env.OPENAI_API_KEY?.trim()) return "openai";
-  throw new Error(
-    "Add GROQ_API_KEY, ANTHROPIC_API_KEY, or OPENAI_API_KEY to .env, then restart the dev server.",
-  );
-}
-
-async function completeJson(system: string, user: string): Promise<Record<string, unknown>> {
-  const chosen = provider();
-
-  if (chosen === "anthropic") {
-    const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+  if (provider === "anthropic") {
+    const client = new Anthropic({ apiKey });
     const model = process.env.ANTHROPIC_MODEL ?? "claude-sonnet-4-20250514";
     const response = await client.messages.create({
       model,
@@ -38,14 +32,14 @@ async function completeJson(system: string, user: string): Promise<Record<string
   }
 
   const client =
-    chosen === "groq"
+    provider === "groq"
       ? new OpenAI({
-          apiKey: process.env.GROQ_API_KEY,
+          apiKey,
           baseURL: "https://api.groq.com/openai/v1",
         })
-      : new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+      : new OpenAI({ apiKey });
   const model =
-    chosen === "groq"
+    provider === "groq"
       ? (process.env.GROQ_MODEL ?? "openai/gpt-oss-120b")
       : (process.env.OPENAI_MODEL ?? "gpt-4o-mini");
   const response = await client.chat.completions.create({
@@ -61,13 +55,17 @@ async function completeJson(system: string, user: string): Promise<Record<string
   return parseJsonObject(text);
 }
 
-export async function generateRubric(input: {
-  title: string;
-  questionsText: string;
-  solutionsText: string;
-}): Promise<RubricDraftCriterion[]> {
+export async function generateRubric(
+  input: {
+    title: string;
+    questionsText: string;
+    solutionsText: string;
+  },
+  credentials: LlmCredentials,
+): Promise<RubricDraftCriterion[]> {
   const stated = parseStatedPoints(input.questionsText);
   const data = await completeJson(
+    credentials,
     `You write grading rubrics for college courses. Return JSON only.
 Shape: {"criteria":[{"label":"short name","maxPoints":number,"fullCreditDescription":"what full credit requires"}]}
 Rules:
@@ -97,18 +95,21 @@ ${statedPointsPromptBlock(stated)}`,
   return cleaned;
 }
 
-export async function gradeSubmission(input: {
-  title: string;
-  questionsText: string;
-  solutionsText: string;
-  studentText: string;
-  criteria: Array<{
-    id: string;
-    label: string;
-    maxPoints: number;
-    fullCreditDescription: string;
-  }>;
-}): Promise<{ summary: string; scores: GradeDraftScore[] }> {
+export async function gradeSubmission(
+  input: {
+    title: string;
+    questionsText: string;
+    solutionsText: string;
+    studentText: string;
+    criteria: Array<{
+      id: string;
+      label: string;
+      maxPoints: number;
+      fullCreditDescription: string;
+    }>;
+  },
+  credentials: LlmCredentials,
+): Promise<{ summary: string; scores: GradeDraftScore[] }> {
   const rubricBlock = input.criteria
     .map(
       (criterion, index) =>
@@ -117,6 +118,7 @@ export async function gradeSubmission(input: {
     .join("\n");
 
   const data = await completeJson(
+    credentials,
     `You are a careful teaching assistant. Grade only against the given rubric. Be fair and consistent.
 Deduct only for missing or incorrect work. Do not invent criteria.
 If the student earns full credit on a criterion, still write a short note saying why.

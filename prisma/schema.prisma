@@ -12,6 +12,8 @@ model User {
   email        String         @unique
   name         String
   passwordHash String
+  llmProvider  String?
+  llmKeyCipher String?
   createdAt    DateTime       @default(now())
   sessions     Session[]
   memberships  CourseMember[]

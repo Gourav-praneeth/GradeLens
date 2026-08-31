@@ -3,6 +3,7 @@ import { guardAssignment } from "@/lib/access";
 import { prisma } from "@/lib/db";
 import { jsonError } from "@/lib/http";
 import { generateRubric } from "@/lib/llm";
+import { resolveLlmCredentials } from "@/lib/llmKeys";
 import { replaceRubric } from "@/lib/rubric";
 import { llmUserMessage } from "@/lib/errors";
 
@@ -18,11 +19,15 @@ export async function POST(_request: Request, context: RouteContext) {
   const assignment = access.assignment;
 
   try {
-    const criteria = await generateRubric({
-      title: assignment.title,
-      questionsText: assignment.questionsText,
-      solutionsText: assignment.solutionsText,
-    });
+    const credentials = await resolveLlmCredentials(access.user.id);
+    const criteria = await generateRubric(
+      {
+        title: assignment.title,
+        questionsText: assignment.questionsText,
+        solutionsText: assignment.solutionsText,
+      },
+      credentials,
+    );
     await replaceRubric(id, criteria);
     const rubric = await prisma.rubric.findUnique({
       where: { assignmentId: id },

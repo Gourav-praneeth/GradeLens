@@ -26,7 +26,8 @@ export function SignupForm() {
         }),
       });
       if (!response.ok) throw new Error(await readError(response));
-      router.push("/");
+      const data = (await response.json()) as { needsVerification?: boolean };
+      router.push(data.needsVerification ? `/verify-email/sent?email=${encodeURIComponent(String(form.get("email") ?? ""))}` : "/");
       router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not create the account.");

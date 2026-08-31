@@ -17,6 +17,7 @@ export default async function AccountPage() {
       <section className="card px-5 py-6">
         <p className="font-semibold">{user.name}</p>
         <p className="mt-1 text-sm text-muted">{user.email}</p>
+        <p className="mt-2 text-sm text-mark">Email verified</p>
         <div className="mt-5 max-w-xs">
           <LogoutButton />
         </div>

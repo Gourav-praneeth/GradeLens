@@ -33,7 +33,8 @@ The app is a long-running Node server with SQLite and uploaded files on disk. **
 2. Add a volume and mount it at `/data`.
 3. Optional: set `GROQ_API_KEY` (or another LLM key) as a fallback, and `LLM_KEY_SECRET` to encrypt personal keys. Instructors should save their own keys in Account settings. The container defaults `DATABASE_URL` and `UPLOAD_DIR` under `/data`.
 4. Optional: `SIGNUP_INVITE` so extra instructors can join without a course staff invite. `ALLOW_SIGNUP=true` opens signup to anyone with the URL.
-5. Deploy, open the HTTPS URL, and create the **first** account. After that, production signup is limited to invited staff emails, a matching invite code, or `ALLOW_SIGNUP=true`.
+5. Set `RESEND_API_KEY`, `EMAIL_FROM`, and `PUBLIC_APP_URL` so GradeLens can verify emails and send password-reset messages.
+6. Deploy, open the HTTPS URL, and create the **first** account. After that, production signup is limited to invited staff emails, a matching invite code, or `ALLOW_SIGNUP=true`.
 
 Use **fake student work** on a public URL. The model is a first pass; keep a human in the loop before scores are official.
 
@@ -46,7 +47,7 @@ docker run --rm -p 3000:3000 -v gradelens-data:/data -e GROQ_API_KEY=... gradele
 
 ## How it works
 
-1. Sign up, save your Groq, OpenAI, or Anthropic key under **Account**, then create a course (and optionally a student roster).
+1. Sign up (and verify your email if this server sends mail), save your Groq, OpenAI, or Anthropic key under **Account**, then create a course (and optionally a student roster).
 2. Create an assignment in that course and add questions plus official solutions (paste or PDF).
 3. Generate a rubric, then edit criteria and point values.
 4. Upload student work as PDF or `.txt`. Filenames like `alex-chen.pdf` match roster names.

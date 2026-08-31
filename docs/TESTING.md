@@ -26,7 +26,7 @@ Optional: `npm test` runs unit tests (roster matching, CSV export, point parsing
 
 1. Open `/signup`.
 2. Enter a name, a valid email, and a password of at least 8 characters.
-3. You land on **Assignments**. The sidebar shows your name and a **Log out** control.
+3. You land on the courses dashboard. If email sending is configured, you first land on **Check your email** and must open the verification link.
 
 **Checks**
 
@@ -35,11 +35,20 @@ Optional: `npm test` runs unit tests (roster matching, CSV export, point parsing
 - Logged-in visits to `/login` or `/signup` redirect home.
 - Logged-out visits to `/` or `/courses` redirect to login.
 - On a production deploy, a second uninvited signup is rejected unless `SIGNUP_INVITE` or `ALLOW_SIGNUP=true` is set. Invited TA emails still work.
+- With `RESEND_API_KEY` set, an unverified account cannot sign in until the email link is used.
 
 ### Log in and log out
 
 1. Log out, then sign in at `/login` with the same email and password.
 2. Confirm you return to the assignment list.
+
+### Forgot password
+
+1. Open **Forgot password?** on the sign-in page.
+2. If email is configured, enter your address and **Send reset link**.
+3. Open the message, choose a new password of at least 8 characters, then sign in.
+
+If email is not configured, the page explains that this server cannot send mail.
 
 ### Personal grading API key
 

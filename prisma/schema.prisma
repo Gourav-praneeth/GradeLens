@@ -8,15 +8,28 @@ datasource db {
 }
 
 model User {
-  id           String         @id @default(cuid())
-  email        String         @unique
-  name         String
-  passwordHash String
-  llmProvider  String?
-  llmKeyCipher String?
-  createdAt    DateTime       @default(now())
-  sessions     Session[]
-  memberships  CourseMember[]
+  id              String         @id @default(cuid())
+  email           String         @unique
+  name            String
+  passwordHash    String
+  emailVerifiedAt DateTime?
+  llmProvider     String?
+  llmKeyCipher    String?
+  createdAt       DateTime       @default(now())
+  sessions        Session[]
+  authTokens      AuthToken[]
+  memberships     CourseMember[]
+}
+
+model AuthToken {
+  id         String    @id @default(cuid())
+  userId     String
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type       String
+  tokenHash  String    @unique
+  expiresAt  DateTime
+  consumedAt DateTime?
+  createdAt  DateTime  @default(now())
 }
 
 model Session {

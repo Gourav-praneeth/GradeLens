@@ -10,8 +10,11 @@ export default async function HelpPage() {
         {user ? null : <BrandMark />}
         <h1 className="font-read text-3xl font-semibold tracking-tight">Help</h1>
         <section className="card px-5 py-6 text-sm leading-6">
-          <p>Sign in with the instructor email and password you created. University SSO is not configured in this local build.</p>
-          <p className="mt-3">Password reset email is not available here. Create a new account, or ask a course owner to invite your email as a TA.</p>
+          <p>Sign in with the instructor email and password you created. University SSO is not configured yet.</p>
+          <p className="mt-3">
+            Forgot your password? Use the reset link on the sign-in page. New accounts get a verification email when
+            this server is set up to send mail.
+          </p>
           <p className="mt-3">Courses hold the roster and assignments. Open an assignment to generate a rubric, upload student work, then grade with per-criterion explanations.</p>
           {user ? null : (
             <p className="mt-4">

@@ -60,7 +60,16 @@ export function LoginForm() {
           Forgot password?
         </Link>
       </div>
-      {error ? <p className="text-sm text-pen">{error}</p> : null}
+      {error ? (
+        <p className="text-sm text-pen">
+          {error}{" "}
+          {error.toLowerCase().includes("verify your email") ? (
+            <Link href="/verify-email/sent" className="underline">
+              Resend the email
+            </Link>
+          ) : null}
+        </p>
+      ) : null}
       {ssoNotice ? <p className="text-sm text-muted">{ssoNotice}</p> : null}
       <button className="btn btn-primary w-full" type="submit" disabled={pending}>
         {pending ? "Signing in…" : "Sign in"}

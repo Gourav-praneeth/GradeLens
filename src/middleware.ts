@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { SESSION_COOKIE } from "@/lib/sessionCookie";
 
-const PUBLIC_PATHS = ["/login", "/signup", "/login/forgot", "/help"];
+const PUBLIC_PATHS = ["/login", "/signup", "/login/forgot", "/help", "/verify-email", "/verify-email/sent", "/reset-password"];
+const KEEP_LOGGED_IN_PUBLIC = ["/verify-email", "/verify-email/sent", "/reset-password"];
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -18,7 +19,7 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(login);
   }
 
-  if (token && PUBLIC_PATHS.includes(pathname)) {
+  if (token && PUBLIC_PATHS.includes(pathname) && !KEEP_LOGGED_IN_PUBLIC.includes(pathname)) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 

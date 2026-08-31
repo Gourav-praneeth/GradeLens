@@ -9,6 +9,7 @@ export type AuthUser = {
   id: string;
   email: string;
   name: string;
+  emailVerified: boolean;
 };
 
 export async function createSession(userId: string, options?: { remember?: boolean }) {
@@ -45,5 +46,10 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
     if (session) await prisma.session.delete({ where: { id: session.id } });
     return null;
   }
-  return { id: session.user.id, email: session.user.email, name: session.user.name };
+  return {
+    id: session.user.id,
+    email: session.user.email,
+    name: session.user.name,
+    emailVerified: Boolean(session.user.emailVerifiedAt),
+  };
 }

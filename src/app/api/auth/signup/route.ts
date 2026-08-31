@@ -1,8 +1,11 @@
 import { NextResponse } from "next/server";
+import { sendVerificationEmail } from "@/lib/authEmail";
 import { createSession } from "@/lib/auth";
 import { jsonError } from "@/lib/http";
 import { isValidEmail, normalizeEmail } from "@/lib/identity";
 import { acceptInvitesForEmail, claimUnownedAssignments } from "@/lib/onboarding";
+import { emailEnabled } from "@/lib/mail";
+import { appOrigin } from "@/lib/origin";
 import { hashPassword } from "@/lib/password";
 import { prisma } from "@/lib/db";
 import { signupAccess } from "@/lib/signupAccess";
@@ -41,11 +44,22 @@ export async function POST(request: Request) {
         name,
         email,
         passwordHash: await hashPassword(password),
+        emailVerifiedAt: emailEnabled() ? null : new Date(),
       },
     });
 
     await claimUnownedAssignments(user.id);
     await acceptInvitesForEmail(user.id, email);
+
+    if (emailEnabled()) {
+      try {
+        await sendVerificationEmail({ id: user.id, email: user.email, name: user.name }, appOrigin(request));
+      } catch {
+        // Account exists; they can resend from the check-email page.
+      }
+      return NextResponse.json({ ok: true, needsVerification: true });
+    }
+
     await createSession(user.id);
     return NextResponse.json({ ok: true });
   } catch (error) {

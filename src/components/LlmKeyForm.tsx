@@ -11,6 +11,12 @@ export type LlmKeyStatus = {
   usingServerKey: boolean;
 };
 
+const PROVIDER_LABEL: Record<LlmProvider, string> = {
+  groq: "Groq",
+  openai: "OpenAI",
+  anthropic: "Anthropic",
+};
+
 export function LlmKeyForm({ initial }: { initial: LlmKeyStatus }) {
   const [status, setStatus] = useState(initial);
   const [provider, setProvider] = useState<LlmProvider>(initial.provider ?? "groq");
@@ -20,10 +26,11 @@ export function LlmKeyForm({ initial }: { initial: LlmKeyStatus }) {
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    const form = event.currentTarget;
     setError(null);
     setSaved(false);
     setPending(true);
-    const apiKey = String(new FormData(event.currentTarget).get("apiKey") ?? "");
+    const apiKey = String(new FormData(form).get("apiKey") ?? "");
     try {
       const response = await fetch("/api/account/llm-key", {
         method: "PUT",
@@ -34,7 +41,7 @@ export function LlmKeyForm({ initial }: { initial: LlmKeyStatus }) {
       const next = (await response.json()) as LlmKeyStatus;
       setStatus(next);
       setSaved(true);
-      event.currentTarget.reset();
+      form.reset();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not save the API key.");
     } finally {
@@ -58,6 +65,11 @@ export function LlmKeyForm({ initial }: { initial: LlmKeyStatus }) {
     }
   }
 
+  const savedLine =
+    status.configured && status.provider && status.hint
+      ? `Saved ${PROVIDER_LABEL[status.provider]} key ${status.hint}. Paste a new key below to replace it.`
+      : null;
+
   return (
     <form id="grading-key" onSubmit={onSubmit} className="scroll-mt-24 space-y-4">
       <h2 className="font-semibold">Grading API key</h2>
@@ -65,18 +77,15 @@ export function LlmKeyForm({ initial }: { initial: LlmKeyStatus }) {
         Rubric generation and grading use your key so usage is billed to you, not a shared server
         account. Keys are stored encrypted and never shown in full after save.
       </p>
-      {status.configured ? (
-        <p className="text-sm">
-          Saved {status.provider} key {status.hint}. Paste a new key below to replace it.
-        </p>
-      ) : status.usingServerKey ? (
+      {!status.configured && status.usingServerKey ? (
         <p className="text-sm text-muted">
           No personal key yet. GradeLens will use the server key from <code>.env</code> until you save one
           here.
         </p>
-      ) : (
+      ) : null}
+      {!status.configured && !status.usingServerKey ? (
         <p className="text-sm text-pen">Add a key before generating a rubric or grading papers.</p>
-      )}
+      ) : null}
       <label className="block">
         <span className="field-label">Provider</span>
         <select className="field" value={provider} onChange={(event) => setProvider(event.target.value as LlmProvider)}>
@@ -96,8 +105,8 @@ export function LlmKeyForm({ initial }: { initial: LlmKeyStatus }) {
           placeholder={status.configured ? "Paste a new key to replace" : "Paste your API key"}
         />
       </label>
+      {saved && savedLine ? <p className="text-sm text-mark">{savedLine}</p> : null}
       {error ? <p className="text-sm text-pen">{error}</p> : null}
-      {saved ? <p className="text-sm text-mark">API key saved.</p> : null}
       <div className="flex flex-wrap gap-2">
         <button className="btn btn-primary" type="submit" disabled={pending}>
           {pending ? "Saving…" : "Save API key"}

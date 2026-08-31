@@ -30,5 +30,4 @@ COPY docker-entrypoint.sh /app/docker-entrypoint.sh
 RUN chmod +x /app/docker-entrypoint.sh
 
 EXPOSE 3000
-VOLUME ["/data"]
 CMD ["/app/docker-entrypoint.sh"]

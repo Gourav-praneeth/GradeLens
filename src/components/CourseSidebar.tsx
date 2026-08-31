@@ -68,6 +68,10 @@ export function CourseSidebar({
           <RailIcon name="help" />
           <span className="rail-text">Help / Documentation</span>
         </Link>
+        <Link href="/feedback" className="rail-link" title="Feedback">
+          <RailIcon name="feedback" />
+          <span className="rail-text">Feedback</span>
+        </Link>
         <Link href="/account" className="rail-link" title="Account">
           <RailIcon name="account" />
           <span className="rail-text">Account</span>

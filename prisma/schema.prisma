@@ -19,6 +19,7 @@ model User {
   sessions        Session[]
   authTokens      AuthToken[]
   memberships     CourseMember[]
+  feedback        Feedback[]
 }
 
 model AuthToken {
@@ -162,4 +163,14 @@ model CriterionScore {
   overrideNote       String?
   deductionReason    String
   evidenceQuote      String?
+}
+
+model Feedback {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  message   String
+  page      String   @default("")
+  status    String   @default("open")
+  createdAt DateTime @default(now())
 }

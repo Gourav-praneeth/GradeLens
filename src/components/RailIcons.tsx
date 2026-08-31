@@ -8,6 +8,7 @@ type IconName =
   | "staff"
   | "settings"
   | "help"
+  | "feedback"
   | "account"
   | "signout"
   | "panel";
@@ -68,6 +69,12 @@ export function RailIcon({ name }: { name: IconName }) {
           <circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" strokeWidth="1.6" />
           <path d="M9.4 9.4a2.6 2.6 0 1 1 3.4 3.3c-.7.4-1.1 1-.1 1.8" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
           <circle cx="12" cy="17.2" r="0.8" fill="currentColor" />
+        </>
+      ) : null}
+      {name === "feedback" ? (
+        <>
+          <path d="M5 6.5h14v10.2H9.2L5 20.2V6.5z" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
+          <path d="M8.5 10.2h7M8.5 13.4h5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
         </>
       ) : null}
       {name === "account" ? (

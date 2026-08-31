@@ -23,6 +23,9 @@ export function UserMenu({ user }: { user: AuthUser }) {
       {open ? (
         <div className="user-menu-panel" role="menu">
           <p className="px-3 py-2 text-xs text-muted">{user.email}</p>
+          <Link href="/feedback" className="nav-item" onClick={() => setOpen(false)}>
+            Feedback
+          </Link>
           <Link href="/account" className="nav-item" onClick={() => setOpen(false)}>
             Account
           </Link>

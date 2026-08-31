@@ -63,6 +63,12 @@ If email is not configured, the page explains that this server cannot send mail.
 - **Remove key** clears the personal key. If `.env` still has a key, grading can use that fallback.
 - A second instructor’s key is stored on their account only.
 
+### Feedback
+
+1. In the course sidebar, **Feedback** is above **Account**.
+2. Describe the issue (at least 10 characters) and **Send feedback**.
+3. The first GradeLens account (or `FEEDBACK_ADMIN_EMAIL`) also sees an **Inbox** of every report, with Mark done.
+
 ---
 
 ## 2. Courses, roster, and TAs

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
+import { courseMonogram, courseRoleLabel, courseRoleSummary } from "@/lib/courseOptions";
 import { prisma } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
@@ -31,6 +32,7 @@ export default async function CoursesDashboard({ searchParams }: PageProps) {
     const hay = `${row.course.name} ${row.course.code ?? ""} ${row.course.semester ?? ""}`.toLowerCase();
     return hay.includes(query);
   });
+  const roleSummary = courseRoleSummary(memberships.map((row) => row.role));
 
   return (
     <div className="page-wrap space-y-6">
@@ -38,6 +40,7 @@ export default async function CoursesDashboard({ searchParams }: PageProps) {
         <div>
           <h1 className="font-read text-3xl font-semibold tracking-tight">Courses</h1>
           <p className="mt-1 text-sm text-muted">Open a course to grade, manage the roster, and review the gradebook.</p>
+          {roleSummary ? <p className="mt-2 text-sm font-semibold text-mark">{roleSummary}</p> : null}
         </div>
         <Link href="/courses/new" className="btn btn-primary">
           + Add course
@@ -50,11 +53,6 @@ export default async function CoursesDashboard({ searchParams }: PageProps) {
           <p className="mt-2 text-sm text-muted">
             {query ? "Try another search." : "Create a course, then add staff, a roster, and assignments."}
           </p>
-          <div className="mt-5">
-            <Link href="/courses/new" className="btn btn-primary">
-              + Add course
-            </Link>
-          </div>
         </section>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
@@ -63,7 +61,12 @@ export default async function CoursesDashboard({ searchParams }: PageProps) {
             const published = row.course._count.assignments;
             return (
               <article key={row.course.id} className="card course-card" style={{ ["--course-accent" as string]: row.course.accent }}>
-                <div className="course-card-stripe" />
+                <div className="course-card-band">
+                  <span className="course-card-monogram" aria-hidden="true">
+                    {courseMonogram(row.course.name)}
+                  </span>
+                  <span className="course-role-badge">{courseRoleLabel(row.role)}</span>
+                </div>
                 <div className="flex flex-1 flex-col px-5 py-5">
                   <p className="text-xs font-semibold uppercase tracking-wide text-muted">
                     {row.course.code || "No code"}
@@ -84,7 +87,6 @@ export default async function CoursesDashboard({ searchParams }: PageProps) {
                   </dl>
                   <p className="mt-3 text-sm">
                     <span className="status">{row.course.status === "archived" ? "Archived" : "Active"}</span>
-                    <span className="ml-2 text-muted">{row.role === "owner" ? "Owner" : "TA"}</span>
                   </p>
                   <div className="mt-5">
                     <Link href={`/courses/${row.course.id}`} className="btn btn-primary">

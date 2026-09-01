@@ -15,13 +15,13 @@ export async function POST(request: Request, context: RouteContext) {
   const access = await requireCourseAccess(auth.user.id, id);
   if (access.error) return access.error;
   if (!isOwner(access.member.role)) {
-    return jsonError("Only the course owner can add TAs.", 403);
+    return jsonError("Only the course instructor can add TAs.", 403);
   }
 
   const body = (await request.json()) as { email?: string };
   const email = normalizeEmail(String(body.email ?? ""));
   if (!isValidEmail(email)) return jsonError("Enter a valid email address.");
-  if (email === auth.user.email) return jsonError("You already own this course.");
+  if (email === auth.user.email) return jsonError("You are already the instructor for this course.");
 
   const existingUser = await prisma.user.findUnique({ where: { email } });
   if (existingUser) {
@@ -48,7 +48,7 @@ export async function DELETE(request: Request, context: RouteContext) {
   const access = await requireCourseAccess(auth.user.id, id);
   if (access.error) return access.error;
   if (!isOwner(access.member.role)) {
-    return jsonError("Only the course owner can remove TAs.", 403);
+    return jsonError("Only the course instructor can remove TAs.", 403);
   }
 
   const body = (await request.json()) as { memberId?: string; inviteId?: string };
@@ -61,7 +61,7 @@ export async function DELETE(request: Request, context: RouteContext) {
     where: { id: String(body.memberId ?? ""), courseId: id },
   });
   if (!member) return jsonError("Member not found.", 404);
-  if (member.role === "owner") return jsonError("The course owner cannot be removed.");
+  if (member.role === "owner") return jsonError("The course instructor cannot be removed.");
   await prisma.courseMember.delete({ where: { id: member.id } });
   return NextResponse.json({ ok: true });
 }

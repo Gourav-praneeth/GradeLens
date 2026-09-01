@@ -20,10 +20,10 @@ export function signupAccess(input: {
   if (env.NODE_ENV !== "production") return { ok: true };
 
   if (expected) {
-    return { ok: false, message: "Enter a valid invite code, or sign up with the email a course owner invited." };
+    return { ok: false, message: "Enter a valid invite code, or sign up with the email a course instructor invited." };
   }
   return {
     ok: false,
-    message: "New accounts are invite-only. Ask a course owner to add your email as staff, then sign up with that address.",
+    message: "New accounts are invite-only. Ask a course instructor to add your email as staff, then sign up with that address.",
   };
 }

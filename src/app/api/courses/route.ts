@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { requireUser } from "@/lib/access";
+import { COURSE_ACCENTS, isValidCourseAccent, isValidSemester } from "@/lib/courseOptions";
 import { prisma } from "@/lib/db";
 import { jsonError } from "@/lib/http";
 
@@ -33,8 +34,14 @@ export async function POST(request: Request) {
   const code = String(body.code ?? "").trim() || null;
   const semester = String(body.semester ?? "").trim() || null;
   const description = String(body.description ?? "").trim();
-  const accent = String(body.accent ?? "").trim() || "#1c4d4a";
+  const accent = String(body.accent ?? "").trim() || COURSE_ACCENTS[0].value;
   if (!name) return jsonError("Give the course a name.");
+  if (semester && !isValidSemester(semester)) {
+    return jsonError("Choose a semester from the list.");
+  }
+  if (!isValidCourseAccent(accent)) {
+    return jsonError("Choose a valid course color.");
+  }
 
   const course = await prisma.course.create({
     data: {

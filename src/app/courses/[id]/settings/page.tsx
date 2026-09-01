@@ -36,7 +36,7 @@ export default async function CourseSettingsPage({ params }: PageProps) {
           />
         </section>
       ) : (
-        <p className="text-sm text-muted">Only the owner can change course settings.</p>
+        <p className="text-sm text-muted">Only the course instructor can change course settings.</p>
       )}
       <section className="card px-5 py-6">
         <h2 className="font-semibold">Grading API key</h2>

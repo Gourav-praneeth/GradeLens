@@ -76,11 +76,18 @@ If email is not configured, the page explains that this server cannot send mail.
 
 ### Create a course
 
-1. Sidebar → **New course** (or **Courses** → **New course**).
+1. On the Courses dashboard, select the single **Add course** action.
 2. Name: `Computer Organization`. Code: `CSE230` (code is optional).
-3. Submit. You should be on the course page as **Owner**.
+3. Choose `Fall 2026` from the semester dropdown and select a named course color.
+4. Submit. You should be on the course page as **Instructor**.
 
 The course appears in the sidebar and on `/courses`.
+
+**Checks**
+
+- The dashboard identifies your role as **Instructor** and course cards carry an Instructor or TA badge.
+- Course colors have clearly different hues and appear as a bold card header and course-rail marker.
+- The empty dashboard never shows two Add course buttons.
 
 ### Roster
 
@@ -101,12 +108,12 @@ On the course page, add students. Email is optional but is used in Canvas / Grad
 
 You need a second browser (or a private window) for this.
 
-1. As the owner, under **Teaching assistants**, invite `ta@school.edu`.
+1. As the instructor, under **Teaching staff**, invite `ta@school.edu`.
 2. The row should say **Invite pending**.
 3. In the other browser, sign up as that email (name + password ≥ 8 characters).
 4. The TA should see `CSE230` in the sidebar and can open the same assignments.
 5. On the course page the TA sees “You are a TA” and **cannot** add or remove TAs.
-6. As owner, you can **Remove** a TA or a pending invite.
+6. As instructor, you can **Remove** a TA or a pending invite.
 
 If the TA already has an account before you invite them, inviting that email adds them immediately (“TA added to the course”) instead of pending.
 
@@ -289,12 +296,12 @@ Open each file in a spreadsheet.
 
 **Checks**
 
-- Sidebar: Assignments, Courses, New course, New assignment, then each course and its assignments.
-- Nested **Overview / Submissions / Review** only when that assignment is selected.
-- Home list: title, course, rubric ready vs needs rubric, `n of m graded`, point total.
+- Course sidebar: Overview, Assignments, Roster, Grades, Calendar, Analytics, Teaching staff, and Course settings.
+- **Help / Documentation** opens a field guide covering accounts, courses, roster, assignments, rubric, grading, feedback, and exports.
+- Courses home: search, role summary, one Add course action, and distinctive course cards.
 - **Delete** on the assignment overview asks for confirmation, then returns home. The assignment is gone from the sidebar.
 
-TAs see the same grading UI. Only the course owner manages TA invites.
+TAs see the same grading UI. Only the course instructor manages TA invites.
 
 ---
 
@@ -323,7 +330,7 @@ From the repo root:
 npm test
 ```
 
-These cover parsing, CSV shapes, roster filename matching, override rules, and related helpers. They do not call the LLM or the browser.
+These cover parsing, CSV shapes, roster filename matching, override rules, course options, API validation, and Help field coverage. They do not call the LLM or the browser.
 
 ---
 

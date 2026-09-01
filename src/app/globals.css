@@ -72,6 +72,111 @@ a {
   font-weight: 600;
 }
 
+.course-color-grid {
+  display: grid;
+  gap: 0.65rem;
+  grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr));
+}
+
+.course-color-option {
+  display: grid;
+  grid-template-columns: auto 2.1rem 1fr;
+  align-items: center;
+  gap: 0.65rem;
+  min-height: 4rem;
+  padding: 0.65rem;
+  border: 2px solid var(--color-line);
+  border-radius: 10px;
+  background: var(--color-surface);
+  cursor: pointer;
+}
+
+.course-color-option:has(input:checked) {
+  border-color: var(--swatch);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--swatch) 22%, transparent);
+}
+
+.course-color-option:has(input:focus-visible) {
+  outline: 2px solid var(--color-mark);
+  outline-offset: 2px;
+}
+
+.course-color-option input {
+  width: 1rem;
+  height: 1rem;
+  accent-color: var(--swatch);
+}
+
+.course-color-chip {
+  width: 2.1rem;
+  height: 2.1rem;
+  border-radius: 9px;
+  background: var(--swatch);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+}
+
+.help-hero {
+  padding: 1.5rem 0 0.5rem;
+}
+
+.help-toc {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.75rem;
+}
+
+.help-toc a {
+  border-radius: 999px;
+  padding: 0.4rem 0.75rem;
+  background: var(--color-canvas);
+  color: var(--color-muted);
+  font-size: 0.8rem;
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.help-toc a:hover {
+  background: var(--color-mark-soft);
+  color: var(--color-mark);
+}
+
+.help-field-grid {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+}
+
+.help-field {
+  min-width: 0;
+  padding: 1rem;
+  border: 1px solid var(--color-line);
+  border-radius: 9px;
+  background: color-mix(in srgb, var(--color-canvas) 55%, white);
+}
+
+.help-requirement {
+  flex-shrink: 0;
+  border-radius: 999px;
+  padding: 0.15rem 0.5rem;
+  background: var(--color-canvas);
+  color: var(--color-muted);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.help-requirement-required {
+  background: var(--color-mark-soft);
+  color: var(--color-mark);
+}
+
+.help-requirement-automatic {
+  background: #eef0ff;
+  color: #5140a8;
+}
+
 .file-well {
   display: flex;
   flex-direction: column;
@@ -384,11 +489,45 @@ a {
   flex-direction: column;
   min-height: 100%;
   overflow: hidden;
+  background: color-mix(in srgb, var(--course-accent, var(--color-mark)) 5%, white);
+  border-color: color-mix(in srgb, var(--course-accent, var(--color-mark)) 32%, var(--color-line));
 }
 
-.course-card-stripe {
-  height: 6px;
+.course-card-band {
+  display: flex;
+  min-height: 4.5rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.8rem 1rem;
   background: var(--course-accent, var(--color-mark));
+}
+
+.course-card-monogram {
+  display: grid;
+  width: 2.75rem;
+  height: 2.75rem;
+  place-items: center;
+  border: 2px solid rgba(255, 255, 255, 0.72);
+  border-radius: 12px;
+  color: white;
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.course-role-badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 0.25rem 0.65rem;
+  background: white;
+  color: var(--course-accent, var(--color-mark));
+  font-size: 0.75rem;
+  font-weight: 750;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
 }
 
 .stat-grid {

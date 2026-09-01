@@ -17,7 +17,7 @@ export default function ForgotPasswordPage() {
             </>
           ) : (
             <p className="text-sm leading-6">
-              This GradeLens server is not set up to send email yet. Ask a course owner to invite you as staff, or
+              This GradeLens server is not set up to send email yet. Ask a course instructor to invite you as staff, or
               create a new account.
             </p>
           )}

@@ -55,7 +55,7 @@ export function SignupForm() {
         <input className="field" name="inviteCode" autoComplete="off" placeholder="If a colleague gave you one" />
       </label>
       <p className="text-xs text-muted">
-        Invited TAs can skip the code and use the same email the course owner added.
+        Invited TAs can skip the code and use the same email the course instructor added.
       </p>
       {error ? <p className="text-sm text-pen">{error}</p> : null}
       <button className="btn btn-primary" type="submit" disabled={pending}>

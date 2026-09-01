@@ -3,8 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { readError } from "@/lib/api";
-
-const ACCENTS = ["#1c4d4a", "#1e3a5f", "#6b3a2a", "#3d4a2a", "#4a2d5c"];
+import { COURSE_ACCENTS, semesterOptions } from "@/lib/courseOptions";
 
 export function CourseForm({
   courseId,
@@ -16,6 +15,12 @@ export function CourseForm({
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
+  const semesters = semesterOptions();
+  const selectedAccent = initial?.accent ?? COURSE_ACCENTS[0].value;
+  const accentOptions: { name: string; value: string; description: string }[] = [...COURSE_ACCENTS];
+  if (!accentOptions.some((option) => option.value.toLowerCase() === selectedAccent.toLowerCase())) {
+    accentOptions.push({ name: "Current", value: selectedAccent, description: "Existing course color" });
+  }
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -60,7 +65,17 @@ export function CourseForm({
         </label>
         <label className="block">
           <span className="field-label">Semester / year</span>
-          <input className="field" name="semester" defaultValue={initial?.semester ?? ""} placeholder="Fall 2026" />
+          <select className="field" name="semester" defaultValue={initial?.semester ?? ""}>
+            <option value="">Select semester</option>
+            {initial?.semester && !semesters.includes(initial.semester) ? (
+              <option value={initial.semester}>Current: {initial.semester}</option>
+            ) : null}
+            {semesters.map((semester) => (
+              <option key={semester} value={semester}>
+                {semester}
+              </option>
+            ))}
+          </select>
         </label>
       </div>
       <label className="block">
@@ -69,11 +84,16 @@ export function CourseForm({
       </label>
       <fieldset>
         <legend className="field-label">Course color</legend>
-        <div className="mt-2 flex flex-wrap gap-2">
-          {ACCENTS.map((color) => (
-            <label key={color} className="inline-flex items-center gap-2 text-sm">
-              <input type="radio" name="accent" value={color} defaultChecked={(initial?.accent ?? "#1c4d4a") === color} />
-              <span className="inline-block h-4 w-8 rounded" style={{ background: color }} />
+        <p className="mb-2 text-sm text-muted">Used as a bold visual marker on the dashboard and inside the course.</p>
+        <div className="course-color-grid">
+          {accentOptions.map((color) => (
+            <label key={color.value} className="course-color-option" style={{ ["--swatch" as string]: color.value }}>
+              <input type="radio" name="accent" value={color.value} defaultChecked={selectedAccent === color.value} />
+              <span className="course-color-chip" aria-hidden="true" />
+              <span>
+                <strong className="block text-sm">{color.name}</strong>
+                <small className="block text-xs text-muted">{color.description}</small>
+              </span>
             </label>
           ))}
         </div>

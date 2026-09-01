@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { guardAssignment } from "@/lib/access";
 import { prisma } from "@/lib/db";
-import { jsonError } from "@/lib/http";
 
 export const runtime = "nodejs";
 

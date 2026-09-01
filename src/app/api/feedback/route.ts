@@ -30,7 +30,7 @@ export async function POST(request: Request) {
   if (message.length < 10) return jsonError("Write a bit more about what happened (at least 10 characters).");
   if (message.length > 4000) return jsonError("Keep feedback under 4,000 characters.");
 
-  const item = await prisma.feedback.create({
+  await prisma.feedback.create({
     data: { userId: auth.user.id, message, page },
   });
   return NextResponse.json({ ok: true });

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { isOwner, requireCourseAccess, requireUser } from "@/lib/access";
+import { COURSE_ACCENTS, isValidCourseAccent, isValidSemester } from "@/lib/courseOptions";
 import { prisma } from "@/lib/db";
 import { jsonError } from "@/lib/http";
 
@@ -14,8 +15,13 @@ export async function PATCH(request: Request, context: RouteContext) {
   const access = await requireCourseAccess(auth.user.id, id);
   if (access.error) return access.error;
   if (!isOwner(access.member.role)) {
-    return jsonError("Only the course owner can change course settings.", 403);
+    return jsonError("Only the course instructor can change course settings.", 403);
   }
+  const currentCourse = await prisma.course.findUnique({
+    where: { id },
+    select: { semester: true },
+  });
+  if (!currentCourse) return jsonError("Course not found.", 404);
 
   const body = (await request.json()) as {
     name?: string;
@@ -26,16 +32,24 @@ export async function PATCH(request: Request, context: RouteContext) {
     status?: string;
   };
   const name = String(body.name ?? "").trim();
+  const semester = String(body.semester ?? "").trim() || null;
+  const accent = String(body.accent ?? "").trim() || COURSE_ACCENTS[0].value;
   if (!name) return jsonError("Give the course a name.");
+  if (semester && !isValidSemester(semester) && semester !== currentCourse.semester) {
+    return jsonError("Choose a semester from the list.");
+  }
+  if (!isValidCourseAccent(accent)) {
+    return jsonError("Choose a valid course color.");
+  }
 
   const course = await prisma.course.update({
     where: { id },
     data: {
       name,
       code: String(body.code ?? "").trim() || null,
-      semester: String(body.semester ?? "").trim() || null,
+      semester,
       description: String(body.description ?? "").trim(),
-      accent: String(body.accent ?? "").trim() || "#1c4d4a",
+      accent,
       status: body.status === "archived" ? "archived" : "active",
     },
   });
@@ -49,7 +63,7 @@ export async function DELETE(_request: Request, context: RouteContext) {
   const access = await requireCourseAccess(auth.user.id, id);
   if (access.error) return access.error;
   if (!isOwner(access.member.role)) {
-    return jsonError("Only the course owner can delete this course.", 403);
+    return jsonError("Only the course instructor can delete this course.", 403);
   }
   await prisma.course.delete({ where: { id } });
   return NextResponse.json({ ok: true });

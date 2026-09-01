@@ -2,6 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import { InviteTaForm, RemoveMemberButton } from "@/components/TaForms";
 import { getCourseMembership, isOwner } from "@/lib/access";
 import { getCurrentUser } from "@/lib/auth";
+import { courseRoleLabel } from "@/lib/courseOptions";
 import { prisma } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
@@ -28,14 +29,14 @@ export default async function StaffPage({ params }: PageProps) {
     <div className="space-y-5">
       <h1 className="font-read text-3xl font-semibold tracking-tight">Teaching staff</h1>
       <section className="card px-5 py-6">
-        {owner ? <InviteTaForm courseId={course.id} /> : <p className="text-sm text-muted">Only the owner can add TAs.</p>}
+        {owner ? <InviteTaForm courseId={course.id} /> : <p className="text-sm text-muted">Only the course instructor can add TAs.</p>}
         <ul className="mt-4 divide-y border-t border-line">
           {course.members.map((row) => (
             <li key={row.id} className="flex items-center justify-between gap-3 py-3">
               <div>
                 <p className="font-medium">{row.user.name}</p>
                 <p className="text-sm text-muted">
-                  {row.user.email} · {row.role === "owner" ? "Owner" : "TA"}
+                  {row.user.email} · {courseRoleLabel(row.role)}
                 </p>
               </div>
               {owner && row.role !== "owner" ? <RemoveMemberButton courseId={course.id} memberId={row.id} /> : null}

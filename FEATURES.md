@@ -33,6 +33,9 @@ Living list of what is built and what should come next. Update this file wheneve
 - Personal Groq, OpenAI, or Anthropic API keys in Account settings (encrypted at rest; server .env is a fallback)
 - In-app feedback: instructors send a private note; only the configured site admin (or first-account fallback) can read the inbox
 - Deterministic lint and test gate blocks Railway deployments before production when verification fails
+- Dashboard role labels distinguish course instructors from TAs and use one clear Add course action
+- Semester dropdown and high-contrast named colors make course offerings consistent and easy to distinguish
+- Complete in-app field guide explains every account, course, roster, assignment, rubric, grading, feedback, and export control
 
 ## Later
 

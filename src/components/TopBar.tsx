@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { BrandMark } from "./BrandMark";
 import { UserMenu } from "./UserMenu";
 import type { AuthUser } from "@/lib/auth";
@@ -35,9 +34,6 @@ export function TopBar({
         <button type="button" className="icon-btn" title="Notifications will arrive in a later release" disabled>
           Alerts
         </button>
-        <Link href="/account" className="icon-btn">
-          Settings
-        </Link>
         <UserMenu user={user} isAdmin={isAdmin} />
       </div>
     </header>

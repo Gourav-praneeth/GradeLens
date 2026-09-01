@@ -19,7 +19,10 @@ describe("CourseSidebar feedback navigation", () => {
   it("lets signed-in non-admins submit feedback without exposing the inbox", () => {
     const html = renderToStaticMarkup(createElement(CourseSidebar, { course, isAdmin: false }));
 
+    expect(html).toContain('href="/help"');
     expect(html).toContain('href="/feedback"');
+    expect(html).toContain('href="/account"');
+    expect(html).not.toContain(">Settings</span>");
     expect(html).not.toContain('href="/admin/feedback"');
   });
 

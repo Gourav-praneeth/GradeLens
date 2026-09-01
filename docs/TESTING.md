@@ -52,10 +52,10 @@ If email is not configured, the page explains that this server cannot send mail.
 
 ### Personal grading API key
 
-1. Open the user menu → **Settings** (or **Account**).
+1. Open the user menu → **Account**. There should be no duplicate global Settings link.
 2. Under **Grading API key**, choose Groq (or OpenAI / Anthropic), paste a key, and **Save API key**.
 3. The page should show a masked hint such as `••••abcd`, never the full key.
-4. Course **Settings** has a link to the same form.
+4. **Course settings** has a link to the same form; it remains separate because it controls the selected course.
 
 **Checks**
 
@@ -297,7 +297,7 @@ Open each file in a spreadsheet.
 **Checks**
 
 - Course sidebar: Overview, Assignments, Roster, Grades, Calendar, Analytics, Teaching staff, and Course settings.
-- **Help / Documentation** opens a field guide covering accounts, courses, roster, assignments, rubric, grading, feedback, and exports.
+- While signed in, **Help / Documentation** opens `/help` instead of redirecting to Courses. The field guide covers accounts, courses, roster, assignments, rubric, grading, feedback, and exports.
 - Courses home: search, role summary, one Add course action, and distinctive course cards.
 - **Delete** on the assignment overview asks for confirmation, then returns home. The assignment is gone from the sidebar.
 

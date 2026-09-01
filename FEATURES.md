@@ -36,6 +36,7 @@ Living list of what is built and what should come next. Update this file wheneve
 - Dashboard role labels distinguish course instructors from TAs and use one clear Add course action
 - Semester dropdown and high-contrast named colors make course offerings consistent and easy to distinguish
 - Complete in-app field guide explains every account, course, roster, assignment, rubric, grading, feedback, and export control
+- Single Account entry keeps user settings distinct from Course settings, and Help works both signed in and signed out
 
 ## Later
 

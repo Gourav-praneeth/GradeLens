@@ -3,7 +3,7 @@ import type { NextRequest } from "next/server";
 import { SESSION_COOKIE } from "@/lib/sessionCookie";
 
 const PUBLIC_PATHS = ["/login", "/signup", "/login/forgot", "/help", "/verify-email", "/verify-email/sent", "/reset-password"];
-const KEEP_LOGGED_IN_PUBLIC = ["/verify-email", "/verify-email/sent", "/reset-password"];
+const KEEP_LOGGED_IN_PUBLIC = ["/help", "/verify-email", "/verify-email/sent", "/reset-password"];
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;

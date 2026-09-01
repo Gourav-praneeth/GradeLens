@@ -21,27 +21,38 @@ export function UserMenu({ user, isAdmin = false }: { user: AuthUser; isAdmin?: 
         <span className="hidden sm:inline">{user.name}</span>
       </button>
       {open ? (
-        <div className="user-menu-panel" role="menu">
-          <p className="px-3 py-2 text-xs text-muted">{user.email}</p>
-          <Link href="/feedback" className="nav-item" onClick={() => setOpen(false)}>
-            Feedback
-          </Link>
-          {isAdmin ? (
-            <Link href="/admin/feedback" className="nav-item" onClick={() => setOpen(false)}>
-              Inbox
-            </Link>
-          ) : null}
-          <Link href="/account" className="nav-item" onClick={() => setOpen(false)}>
-            Account
-          </Link>
-          <Link href="/account" className="nav-item" onClick={() => setOpen(false)}>
-            Settings
-          </Link>
-          <form action="/api/auth/logout" method="post" className="mt-1 border-t border-line pt-1">
-            <LogoutMenuItem />
-          </form>
-        </div>
+        <UserMenuPanel user={user} isAdmin={isAdmin} onNavigate={() => setOpen(false)} />
       ) : null}
+    </div>
+  );
+}
+
+export function UserMenuPanel({
+  user,
+  isAdmin = false,
+  onNavigate,
+}: {
+  user: AuthUser;
+  isAdmin?: boolean;
+  onNavigate: () => void;
+}) {
+  return (
+    <div className="user-menu-panel" role="menu">
+      <p className="px-3 py-2 text-xs text-muted">{user.email}</p>
+      <Link href="/feedback" className="nav-item" onClick={onNavigate}>
+        Feedback
+      </Link>
+      {isAdmin ? (
+        <Link href="/admin/feedback" className="nav-item" onClick={onNavigate}>
+          Inbox
+        </Link>
+      ) : null}
+      <Link href="/account" className="nav-item" onClick={onNavigate}>
+        Account
+      </Link>
+      <form action="/api/auth/logout" method="post" className="mt-1 border-t border-line pt-1">
+        <LogoutMenuItem />
+      </form>
     </div>
   );
 }

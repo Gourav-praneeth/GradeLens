@@ -24,7 +24,7 @@ export const HELP_SECTIONS: HelpSection[] = [
         id: "account-name",
         label: "Name",
         requirement: "Required",
-        description: "Your display name. Course owners see this name when they manage teaching staff.",
+        description: "Your display name. Course instructors see this name when they manage teaching staff.",
         example: "Jordan Lee",
       },
       {

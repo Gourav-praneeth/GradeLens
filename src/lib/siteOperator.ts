@@ -9,7 +9,11 @@ export function isFeedbackAdminEmail(userEmail: string, adminEmail?: string | nu
 }
 
 export async function isSiteOperator(user: AuthUser): Promise<boolean> {
-  if (isFeedbackAdminEmail(user.email, process.env.FEEDBACK_ADMIN_EMAIL)) return true;
+  const configuredAdmin = process.env.FEEDBACK_ADMIN_EMAIL?.trim();
+  if (configuredAdmin) {
+    return isFeedbackAdminEmail(user.email, configuredAdmin);
+  }
+
   const first = await prisma.user.findFirst({
     orderBy: { createdAt: "asc" },
     select: { id: true },

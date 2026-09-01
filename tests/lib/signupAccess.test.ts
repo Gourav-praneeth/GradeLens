@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { signupAccess } from "./signupAccess";
+import { signupAccess } from "@/lib/signupAccess";
 
 describe("signupAccess", () => {
   it("allows the first account in production", () => {

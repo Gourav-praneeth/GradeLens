@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it } from "vitest";
-import { hashToken } from "./authTokens";
-import { emailEnabled, emailFrom } from "./mail";
-import { appOrigin } from "./origin";
+import { hashToken } from "@/lib/authTokens";
+import { emailEnabled, emailFrom } from "@/lib/mail";
+import { appOrigin } from "@/lib/origin";
 
 describe("hashToken", () => {
   it("is stable and not the raw token", () => {

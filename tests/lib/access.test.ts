@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { isOwner } from "./access";
+import { isOwner } from "@/lib/access";
 
 describe("access", () => {
   it("treats owner as the course admin", () => {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatPoints, formatScore, assignmentStatusLabel } from "./format";
+import { formatPoints, formatScore, assignmentStatusLabel } from "@/lib/format";
 
 describe("formatPoints", () => {
   it("keeps integers as integers", () => {

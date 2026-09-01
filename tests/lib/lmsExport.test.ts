@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildCanvasCsv, buildGradescopeCsv, parseExportFormat, splitPersonName } from "./lmsExport";
+import { buildCanvasCsv, buildGradescopeCsv, parseExportFormat, splitPersonName } from "@/lib/lmsExport";
 
 describe("parseExportFormat", () => {
   it("defaults to the GradeLens roster", () => {

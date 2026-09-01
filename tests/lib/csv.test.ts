@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildRosterCsv, csvCell } from "./csv";
+import { buildRosterCsv, csvCell } from "@/lib/csv";
 
 describe("csvCell", () => {
   it("quotes commas and quotes", () => {

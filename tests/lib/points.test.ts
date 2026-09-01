@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import { applyStatedPoints, parseStatedPoints, statedPointsPromptBlock } from "./points";
+import { applyStatedPoints, parseStatedPoints, statedPointsPromptBlock } from "@/lib/points";
 
 const CSE230 = `CSE 230 – Assignment 1
 Important: This is an individual assignment. Please do not collaborate.

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { assignmentPathState, coursePathState, isCoursesHome, isNewAssignment } from "./nav";
+import { assignmentPathState, coursePathState, isCoursesHome, isNewAssignment } from "@/lib/nav";
 
 describe("nav", () => {
   it("marks courses home", () => {

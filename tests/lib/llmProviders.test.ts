@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from "vitest";
-import { envLlmCredentials, parseLlmProvider } from "./llmProviders";
+import { envLlmCredentials, parseLlmProvider } from "@/lib/llmProviders";
 
 describe("parseLlmProvider", () => {
   it("accepts groq, openai, and anthropic", () => {

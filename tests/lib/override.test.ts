@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { validateOverride } from "./override";
+import { validateOverride } from "@/lib/override";
 
 describe("validateOverride", () => {
   it("requires a note when the score changes", () => {

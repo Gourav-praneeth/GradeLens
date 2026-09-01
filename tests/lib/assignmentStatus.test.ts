@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { assignmentLifecycle } from "./assignmentStatus";
+import { assignmentLifecycle } from "@/lib/assignmentStatus";
 
 describe("assignmentLifecycle", () => {
   it("treats a saved rubric as published", () => {

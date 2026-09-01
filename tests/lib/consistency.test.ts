@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { clusterDeductions, deductionFingerprint, scoreDistribution } from "./consistency";
+import { clusterDeductions, deductionFingerprint, scoreDistribution } from "@/lib/consistency";
 
 describe("deductionFingerprint", () => {
   it("treats near-duplicate reasons as the same issue", () => {

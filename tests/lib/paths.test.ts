@@ -1,6 +1,6 @@
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import { resolveDatabaseUrl, resolveUploadRoot } from "./paths";
+import { resolveDatabaseUrl, resolveUploadRoot } from "@/lib/paths";
 
 describe("resolveUploadRoot", () => {
   it("uses UPLOAD_DIR when set", () => {

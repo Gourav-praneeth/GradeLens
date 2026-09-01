@@ -10,7 +10,7 @@ You need a running local server and at least one LLM key. See the project [READM
 2. `npx prisma migrate deploy` then `npm run dev`.
 3. Open [http://localhost:3000](http://localhost:3000). You should be redirected to **Sign in**.
 
-Optional: `npm test` runs unit tests (roster matching, CSV export, point parsing, overrides). Those do not replace clicking through the app.
+`npm test` runs the fast unit and authorization tests. `npm run verify` runs lint plus every test and is the same gate used by the production Docker build. These checks are local and deterministic: they do not call an LLM or consume API tokens.
 
 **Limits to keep in mind**
 
@@ -67,7 +67,8 @@ If email is not configured, the page explains that this server cannot send mail.
 
 1. In the course sidebar, **Feedback** is above **Account**.
 2. Describe the issue (at least 10 characters) and **Send feedback**. Other users never see that note.
-3. Only the first GradeLens account (or `FEEDBACK_ADMIN_EMAIL`) can open **Inbox** / `/admin/feedback` and mark items done.
+3. **Feedback** is visible to every signed-in user so they can submit a note; only the site admin sees **Inbox**.
+4. When `FEEDBACK_ADMIN_EMAIL` is configured, only that account can open **Inbox** / `/admin/feedback` and mark items done. If it is unset, the first GradeLens account is the fallback admin.
 
 ---
 

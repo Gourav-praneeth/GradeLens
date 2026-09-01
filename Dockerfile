@@ -8,6 +8,7 @@ RUN npm ci
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV DATABASE_URL="file:./prisma/build.db"
+RUN npm run verify
 RUN npx prisma generate && npm run build
 
 FROM node:20-bookworm-slim AS runner

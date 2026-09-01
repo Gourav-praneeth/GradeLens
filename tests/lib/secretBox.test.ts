@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { decryptSecret, encryptSecret, maskSecret } from "./secretBox";
+import { decryptSecret, encryptSecret, maskSecret } from "@/lib/secretBox";
 
 describe("secretBox", () => {
   it("round-trips a secret", () => {

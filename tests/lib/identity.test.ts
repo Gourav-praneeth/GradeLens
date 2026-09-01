@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { isValidEmail, normalizeEmail, normalizePersonName } from "./identity";
-import { matchRosterStudent } from "./roster";
+import { isValidEmail, normalizeEmail, normalizePersonName } from "@/lib/identity";
+import { matchRosterStudent } from "@/lib/roster";
 
 describe("identity", () => {
   it("normalizes email addresses", () => {

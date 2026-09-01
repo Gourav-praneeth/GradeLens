@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { courseDisplayName } from "./courseName";
+import { courseDisplayName } from "@/lib/courseName";
 
 describe("courseDisplayName", () => {
   it("prefers the course code", () => {

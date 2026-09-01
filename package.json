@@ -10,9 +10,10 @@
     "build": "next build",
     "start": "next start",
     "start:prod": "prisma migrate deploy && next start",
-    "lint": "eslint",
+    "lint": "eslint src tests vitest.config.ts",
     "test": "vitest run",
     "test:watch": "vitest",
+    "verify": "npm run lint && npm test",
     "postinstall": "prisma generate",
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev"

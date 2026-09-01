@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { safeNextPath } from "./redirect";
+import { safeNextPath } from "@/lib/redirect";
 
 describe("safeNextPath", () => {
   it("allows in-app paths", () => {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { extractDocument } from "./extract";
+import { extractDocument } from "@/lib/extract";
 
 describe("extractDocument", () => {
   it("reads a text file", async () => {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { assembleGradeScores, cleanRubricCriteria } from "./rubricDraft";
+import { assembleGradeScores, cleanRubricCriteria } from "@/lib/rubricDraft";
 
 describe("cleanRubricCriteria", () => {
   it("drops incomplete rows", () => {

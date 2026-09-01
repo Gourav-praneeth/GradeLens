@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { llmUserMessage, scanHelpText } from "./errors";
+import { llmUserMessage, scanHelpText } from "@/lib/errors";
 
 describe("llmUserMessage", () => {
   it("explains a missing model", () => {

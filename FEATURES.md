@@ -31,7 +31,8 @@ Living list of what is built and what should come next. Update this file wheneve
 - Login branding, remember me, email verification, and password reset by email
 - Production hosting with persistent SQLite and uploads, plus invite-only signup on a public URL
 - Personal Groq, OpenAI, or Anthropic API keys in Account settings (encrypted at rest; server .env is a fallback)
-- In-app feedback: instructors send a private note; only the site admin can read the inbox
+- In-app feedback: instructors send a private note; only the configured site admin (or first-account fallback) can read the inbox
+- Deterministic lint and test gate blocks Railway deployments before production when verification fails
 
 ## Later
 

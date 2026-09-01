@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parseJsonObject } from "./json";
+import { parseJsonObject } from "@/lib/json";
 
 describe("parseJsonObject", () => {
   it("parses a raw object", () => {

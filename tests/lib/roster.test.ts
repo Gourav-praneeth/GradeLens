@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { matchRosterStudent, studentDisplayName } from "./roster";
+import { matchRosterStudent, studentDisplayName } from "@/lib/roster";
 
 describe("matchRosterStudent", () => {
   const roster = [

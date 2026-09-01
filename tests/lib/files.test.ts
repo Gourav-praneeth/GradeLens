@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { extensionOf, labelFromFilename } from "./files";
+import { extensionOf, labelFromFilename } from "@/lib/files";
 
 describe("labelFromFilename", () => {
   it("uses the file stem as the student label", () => {

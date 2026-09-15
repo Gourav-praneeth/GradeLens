@@ -64,10 +64,24 @@ export function ImportRosterForm({ courseId }: { courseId: string }) {
     setPending(true);
     const form = event.currentTarget;
     try {
+      const formData = new FormData(form);
+      const file = formData.get("csvFile");
+      const importText = String(formData.get("importText") ?? "").trim();
+      let body: { csvText: string } | { importText: string };
+
+      if (file instanceof File && file.size > 0) {
+        if (file.size > 2_000_000) throw new Error("Roster CSV must be smaller than 2 MB.");
+        body = { csvText: await file.text() };
+      } else if (importText) {
+        body = { importText };
+      } else {
+        throw new Error("Choose a CSV file or paste student names.");
+      }
+
       const response = await fetch(`/api/courses/${courseId}/students`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ importText: String(new FormData(form).get("importText") ?? "") }),
+        body: JSON.stringify(body),
       });
       if (!response.ok) throw new Error(await readError(response));
       form.reset();
@@ -81,6 +95,18 @@ export function ImportRosterForm({ courseId }: { courseId: string }) {
 
   return (
     <form onSubmit={onSubmit} className="space-y-3">
+      <label className="block">
+        <span className="field-label">Upload roster CSV</span>
+        <input className="field" name="csvFile" type="file" accept=".csv,text/csv" />
+        <span className="mt-1 block text-xs text-muted">
+          Headers: Last Name, First Name, Student ID. Email is optional.
+        </span>
+      </label>
+      <div className="flex items-center gap-3 text-xs uppercase tracking-wide text-muted">
+        <span className="h-px flex-1 bg-line" />
+        or
+        <span className="h-px flex-1 bg-line" />
+      </div>
       <label className="block">
         <span className="field-label">Import students (one name per line)</span>
         <textarea className="field min-h-28" name="importText" placeholder="Alex Chen&#10;Jordan Lee" />

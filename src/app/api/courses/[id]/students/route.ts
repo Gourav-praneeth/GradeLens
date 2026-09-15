@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { requireCourseAccess, requireUser } from "@/lib/access";
 import { prisma } from "@/lib/db";
 import { jsonError } from "@/lib/http";
+import { parseRosterCsv } from "@/lib/rosterCsv";
 
 export const runtime = "nodejs";
 
@@ -14,7 +15,30 @@ export async function POST(request: Request, context: RouteContext) {
   const access = await requireCourseAccess(auth.user.id, id);
   if (access.error) return access.error;
 
-  const body = (await request.json()) as { name?: string; email?: string; studentNumber?: string; importText?: string };
+  const body = (await request.json()) as {
+    name?: string;
+    email?: string;
+    studentNumber?: string;
+    importText?: string;
+    csvText?: string;
+  };
+  const csvText = String(body.csvText ?? "");
+  if (csvText.trim()) {
+    try {
+      const students = parseRosterCsv(csvText);
+      const created = await prisma.$transaction(
+        students.map((student) =>
+          prisma.student.create({ data: { courseId: id, ...student } }),
+        ),
+      );
+      return NextResponse.json({ count: created.length });
+    } catch (error) {
+      return jsonError(
+        error instanceof Error ? error.message : "Could not read the roster CSV.",
+      );
+    }
+  }
+
   const importText = String(body.importText ?? "").trim();
   if (importText) {
     const names = importText

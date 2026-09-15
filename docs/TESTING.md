@@ -91,7 +91,7 @@ The course appears in the sidebar and on `/courses`.
 
 ### Roster
 
-On the course page, add students. Email is optional but is used in Canvas / Gradescope CSV export.
+On the course page, add students individually or open **Roster** and upload a CSV. Email is optional but is used in Canvas / Gradescope CSV export.
 
 | Name        | Email (optional)     |
 |-------------|----------------------|
@@ -99,9 +99,12 @@ On the course page, add students. Email is optional but is used in Canvas / Grad
 | Jordan Lee  | jordan@school.edu    |
 | Sam Patel   | sam@school.edu       |
 
+For CSV import, upload a file with `Last Name,First Name,Student ID` headers. `Email` is optional. Confirm that a row such as `Chen,Alex,123456` appears as **Alex Chen** with ID **123456**.
+
 **Checks**
 
 - Names show in the roster list.
+- CSV imports preserve student IDs and optional emails.
 - **Remove** drops a student from the roster (existing submissions keep their display name).
 
 ### Shared TA access

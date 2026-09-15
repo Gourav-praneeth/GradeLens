@@ -22,6 +22,7 @@ Living list of what is built and what should come next. Update this file wheneve
 - Stronger empty and error states when PDFs are scans or the model is unavailable
 - Instructor accounts (email and password)
 - Courses as first-class objects, with a roster of student names
+- Import course rosters from CSV with names, student IDs, and optional emails
 - Shared TA access on the same course and assignments
 - Submission names match the course roster when filenames look like student names
 - Class-wide review of similar deductions and a score distribution

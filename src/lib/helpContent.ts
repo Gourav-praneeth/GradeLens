@@ -152,8 +152,9 @@ export const HELP_SECTIONS: HelpSection[] = [
         id: "roster-import",
         label: "Import students",
         requirement: "Required",
-        description: "Adds several students at once, with one student name on each line.",
-        example: "Alex Chen\nJordan Lee",
+        description: "Uploads a CSV roster or adds several students with one name on each line.",
+        details: 'CSV headers may use "Name", or "First Name" and "Last Name". "Student ID" and "Email" are optional.',
+        example: "Last Name,First Name,Student ID\nChen,Alex,123456",
       },
       {
         id: "roster-search",

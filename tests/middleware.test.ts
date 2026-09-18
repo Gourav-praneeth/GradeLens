@@ -16,10 +16,11 @@ describe("middleware navigation", () => {
     expect(response.headers.get("x-middleware-next")).toBe("1");
   });
 
-  it("still redirects a signed-in user away from the login page", () => {
+  it("lets the login page validate a possibly stale session cookie", () => {
     const response = middleware(request("/login", true));
 
-    expect(response.headers.get("location")).toBe("http://localhost/");
+    expect(response.headers.get("x-middleware-next")).toBe("1");
+    expect(response.headers.get("location")).toBeNull();
   });
 
   it("redirects a signed-out user to login for protected pages", () => {

@@ -19,7 +19,12 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(login);
   }
 
-  if (token && PUBLIC_PATHS.includes(pathname) && !KEEP_LOGGED_IN_PUBLIC.includes(pathname)) {
+  if (
+    token &&
+    pathname !== "/login" &&
+    PUBLIC_PATHS.includes(pathname) &&
+    !KEEP_LOGGED_IN_PUBLIC.includes(pathname)
+  ) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 

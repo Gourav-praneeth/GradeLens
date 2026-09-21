@@ -99,7 +99,7 @@ export function SubmissionUploader({
           accept=".csv,text/csv"
         />
         <span className="mt-1 block text-xs text-muted">
-          Headers: filename plus sis_login_id, student_id, or email.
+          Headers: filename plus sis_login_id (preferred), canvas_user_id, student_id, or email.
         </span>
       </label>
       <p className="text-xs text-muted">

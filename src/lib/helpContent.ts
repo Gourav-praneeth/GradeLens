@@ -164,6 +164,13 @@ export const HELP_SECTIONS: HelpSection[] = [
         details: "Canvas roster sync supplies this value. Name files like SIS_LOGIN_ID__paper.pdf.",
       },
       {
+        id: "roster-canvas-user-id",
+        label: "Canvas ID",
+        requirement: "Automatic",
+        description: "Canvas's internal numeric user identifier, retained for exact API imports and as a fallback file identifier.",
+        details: "This is the ID column in a Canvas gradebook CSV; it is not the SIS Login ID.",
+      },
+      {
         id: "roster-student-email",
         label: "Student email",
         requirement: "Optional",
@@ -174,8 +181,8 @@ export const HELP_SECTIONS: HelpSection[] = [
         label: "Import students",
         requirement: "Required",
         description: "Uploads a CSV roster or adds several students with one name on each line.",
-        details: 'CSV headers may use "Name", or "First Name" and "Last Name". "Student ID" and "Email" are optional.',
-        example: "Last Name,First Name,Student ID\nChen,Alex,123456",
+        details: 'Canvas gradebook headers "Student", "ID", "SIS Login ID", and "Section" are recognized. Generic rosters may use "Name" or separate first and last names.',
+        example: 'Student,ID,SIS Login ID,Section\n"Chen, Alex",894602,achen,77228',
       },
       {
         id: "roster-canvas-course",

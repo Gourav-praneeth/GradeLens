@@ -48,7 +48,7 @@ docker run --rm -p 3000:3000 -v gradelens-data:/data -e GROQ_API_KEY=... gradele
 ## How it works
 
 1. Sign up (and verify your email if this server sends mail), save your Groq, OpenAI, or Anthropic key under **Account**, then create a course.
-2. Add students manually, import a roster CSV, or connect Canvas under **Account** and sync a Canvas course roster.
+2. Add students manually, import a generic or Canvas gradebook CSV, or connect Canvas under **Account** and sync a Canvas course roster. Canvas `ID` and `SIS Login ID` remain separate.
 3. Create an assignment in that course and add questions plus official solutions (paste or PDF).
 4. Generate a rubric, then edit criteria and point values.
 5. Import submissions from Canvas by exact user ID, or bulk-upload PDF/TXT files named like `SIS_LOGIN_ID__paper.pdf`. Ambiguous files stay in a review queue.

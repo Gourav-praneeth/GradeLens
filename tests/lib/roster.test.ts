@@ -29,6 +29,7 @@ describe("matchSubmissionToRoster", () => {
       email: "alex@school.edu",
       studentNumber: "S-100",
       sisLoginId: "achen",
+      canvasUserId: "894602",
     },
     {
       id: "2",
@@ -36,6 +37,7 @@ describe("matchSubmissionToRoster", () => {
       email: "jordan@school.edu",
       studentNumber: "S-101",
       sisLoginId: "jlee",
+      canvasUserId: "1059557",
     },
   ];
 
@@ -60,6 +62,31 @@ describe("matchSubmissionToRoster", () => {
       status: "matched",
       student: { id: "2" },
       method: "manifest_student_id",
+    });
+  });
+
+  it("falls back to an exact Canvas ID", () => {
+    expect(
+      matchSubmissionToRoster({ filename: "1059557__homework.pdf" }, roster),
+    ).toMatchObject({
+      status: "matched",
+      student: { id: "2" },
+      method: "canvas_id",
+    });
+  });
+
+  it("prefers SIS Login ID when it conflicts with another Canvas ID", () => {
+    const conflicting = [
+      roster[0],
+      { ...roster[1], canvasUserId: "achen" },
+    ];
+
+    expect(
+      matchSubmissionToRoster({ filename: "achen__homework.pdf" }, conflicting),
+    ).toMatchObject({
+      status: "matched",
+      student: { id: "1" },
+      method: "sis_login",
     });
   });
 

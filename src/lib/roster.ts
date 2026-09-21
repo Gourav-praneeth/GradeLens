@@ -9,9 +9,11 @@ export type RosterStudent = {
 
 export type SubmissionMatchMethod =
   | "manifest_sis_login"
+  | "manifest_canvas_id"
   | "manifest_student_id"
   | "manifest_email"
   | "sis_login"
+  | "canvas_id"
   | "student_id"
   | "email"
   | "name";
@@ -26,7 +28,7 @@ export type SubmissionMatch =
   | { status: "unmatched"; candidates: [] };
 
 export type ExplicitSubmissionIdentity = {
-  kind: "sisLoginId" | "studentNumber" | "email";
+  kind: "sisLoginId" | "canvasUserId" | "studentNumber" | "email";
   value: string;
 };
 
@@ -50,9 +52,11 @@ export function matchSubmissionToRoster(
     const method: SubmissionMatchMethod =
       input.explicit.kind === "sisLoginId"
         ? "manifest_sis_login"
-        : input.explicit.kind === "studentNumber"
-          ? "manifest_student_id"
-          : "manifest_email";
+        : input.explicit.kind === "canvasUserId"
+          ? "manifest_canvas_id"
+          : input.explicit.kind === "studentNumber"
+            ? "manifest_student_id"
+            : "manifest_email";
     return resultFor(
       roster.filter(
         (student) =>
@@ -69,10 +73,11 @@ export function matchSubmissionToRoster(
   const delimiter = base.indexOf("__");
   const identifier = delimiter >= 0 ? base.slice(0, delimiter) : base;
   const identifierChecks: Array<{
-    field: "sisLoginId" | "studentNumber" | "email";
+    field: "sisLoginId" | "canvasUserId" | "studentNumber" | "email";
     method: SubmissionMatchMethod;
   }> = [
     { field: "sisLoginId", method: "sis_login" },
+    { field: "canvasUserId", method: "canvas_id" },
     { field: "studentNumber", method: "student_id" },
     { field: "email", method: "email" },
   ];

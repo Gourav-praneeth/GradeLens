@@ -27,9 +27,29 @@ export async function POST(request: Request, context: RouteContext) {
     try {
       const students = parseRosterCsv(csvText);
       const created = await prisma.$transaction(
-        students.map((student) =>
-          prisma.student.create({ data: { courseId: id, ...student } }),
-        ),
+        students.map((student) => {
+          const data = {
+            name: student.name,
+            email: student.email,
+            studentNumber: student.studentNumber,
+            sisLoginId: student.sisLoginId,
+            canvasUserId: student.canvasUserId,
+            rosterSource: student.canvasUserId ? "canvas_csv" : "manual",
+            enrollmentStatus: "active",
+          };
+          return student.canvasUserId
+            ? prisma.student.upsert({
+                where: {
+                  courseId_canvasUserId: {
+                    courseId: id,
+                    canvasUserId: student.canvasUserId,
+                  },
+                },
+                create: { courseId: id, ...data },
+                update: data,
+              })
+            : prisma.student.create({ data: { courseId: id, ...data } });
+        }),
       );
       return NextResponse.json({ count: created.length });
     } catch (error) {

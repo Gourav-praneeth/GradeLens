@@ -33,6 +33,7 @@ export default async function StudentProfilePage({ params }: PageProps) {
         <h1 className="mt-2 font-read text-3xl font-semibold tracking-tight">{student.name}</h1>
         <p className="mt-1 text-sm text-muted">
           {student.studentNumber || "No student ID"} · {student.sisLoginId || "No SIS login"} ·{" "}
+          {student.canvasUserId || "No Canvas ID"} ·{" "}
           {student.email || "No email"} ·{" "}
           {student.enrollmentStatus === "inactive" ? "Inactive" : "Active"}
           {student.rosterSource === "canvas" ? " via Canvas" : ""}

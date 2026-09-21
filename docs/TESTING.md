@@ -114,10 +114,19 @@ On the course page, add students individually or open **Roster** and upload a CS
 
 For CSV import, upload a file with `Last Name,First Name,Student ID` headers. `Email` is optional. Confirm that a row such as `Chen,Alex,123456` appears as **Alex Chen** with ID **123456**.
 
+For a Canvas gradebook export, use `Student,ID,SIS Login ID,Section`. Confirm that:
+
+- `"Abdelmalak, Marina",894602,mabdelm5,77228` displays as **Marina Abdelmalak**.
+- **894602** appears under Canvas ID, not Student ID.
+- **mabdelm5** appears under SIS Login.
+- The `Points Possible` row is skipped.
+- Importing the same file again updates the same Canvas-identified students instead of adding duplicates.
+
 **Checks**
 
 - Names show in the roster list.
 - CSV imports preserve student IDs and optional emails.
+- Canvas CSV imports preserve Canvas ID and SIS Login ID as separate identifiers.
 - **Remove** drops a student from the roster (existing submissions keep their display name).
 
 ### Canvas roster sync
@@ -232,7 +241,7 @@ For a deterministic institutional match, use `SIS_LOGIN_ID__paper.pdf`, such as 
 **Checks**
 
 - Manifest mapping takes priority over filename matching.
-- SIS login, student ID, and email require exact matches; arbitrary filename fragments are not used.
+- SIS Login ID is checked first. Canvas ID, student ID, and email remain exact-match fallbacks; arbitrary filename fragments are not used.
 - **Grade ungraded** excludes unresolved submissions and reports how many still need review.
 
 ### Import from Canvas

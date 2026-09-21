@@ -1,14 +1,18 @@
 export type ImportedRosterStudent = {
   name: string;
   studentNumber: string | null;
+  sisLoginId: string | null;
+  canvasUserId: string | null;
   email: string | null;
 };
 
 const headerAliases = {
-  name: ["name", "student name", "full name"],
+  name: ["name", "student", "student name", "full name"],
   firstName: ["first name", "firstname", "given name"],
   lastName: ["last name", "lastname", "surname", "family name"],
-  studentNumber: ["student id", "student number", "id", "sis id"],
+  studentNumber: ["student id", "student number", "sis id", "sis user id"],
+  sisLoginId: ["sis login id", "sis login", "login id"],
+  canvasUserId: ["canvas id", "canvas user id"],
   email: ["email", "email address", "student email"],
 };
 
@@ -29,6 +33,14 @@ export function parseRosterCsv(text: string): ImportedRosterStudent[] {
   const firstNameIndex = findHeader(headers, headerAliases.firstName);
   const lastNameIndex = findHeader(headers, headerAliases.lastName);
   const studentNumberIndex = findHeader(headers, headerAliases.studentNumber);
+  const sisLoginIdIndex = findHeader(headers, headerAliases.sisLoginId);
+  const canvasGradebook =
+    headers.includes("student") &&
+    headers.includes("id") &&
+    headers.includes("sis login id");
+  const canvasUserIdIndex = canvasGradebook
+    ? headers.indexOf("id")
+    : findHeader(headers, headerAliases.canvasUserId);
   const emailIndex = findHeader(headers, headerAliases.email);
 
   if (nameIndex < 0 && (firstNameIndex < 0 || lastNameIndex < 0)) {
@@ -37,24 +49,42 @@ export function parseRosterCsv(text: string): ImportedRosterStudent[] {
     );
   }
 
-  return rows.slice(1).map((row, index) => {
-    const name =
+  const seenCanvasIds = new Set<string>();
+  const students: ImportedRosterStudent[] = [];
+  rows.slice(1).forEach((row, index) => {
+    const rawName =
       nameIndex >= 0
         ? cell(row, nameIndex)
-        : [cell(row, firstNameIndex), cell(row, lastNameIndex)]
-            .filter(Boolean)
-            .join(" ");
+        : [cell(row, firstNameIndex), cell(row, lastNameIndex)].filter(Boolean).join(" ");
+    if (normalizeHeader(rawName) === "points possible") return;
+    const name = canvasGradebook ? displayCanvasName(rawName) : rawName;
 
     if (!name) {
       throw new Error(`Student name is missing on CSV row ${index + 2}.`);
     }
+    const canvasUserId = nullableCell(row, canvasUserIdIndex);
+    if (canvasGradebook && !canvasUserId) {
+      throw new Error(`Canvas ID is missing on CSV row ${index + 2}.`);
+    }
+    if (canvasUserId) {
+      if (seenCanvasIds.has(canvasUserId)) {
+        throw new Error(`Canvas ID "${canvasUserId}" appears more than once.`);
+      }
+      seenCanvasIds.add(canvasUserId);
+    }
 
-    return {
+    students.push({
       name,
       studentNumber: nullableCell(row, studentNumberIndex),
+      sisLoginId: nullableCell(row, sisLoginIdIndex),
+      canvasUserId,
       email: nullableCell(row, emailIndex),
-    };
+    });
   });
+  if (students.length === 0) {
+    throw new Error("The CSV does not contain any student rows.");
+  }
+  return students;
 }
 
 function parseCsvRows(text: string): string[][] {
@@ -112,4 +142,12 @@ function cell(row: string[], index: number): string {
 
 function nullableCell(row: string[], index: number): string | null {
   return cell(row, index) || null;
+}
+
+function displayCanvasName(value: string): string {
+  const comma = value.indexOf(",");
+  if (comma < 0) return value.trim();
+  const last = value.slice(0, comma).trim();
+  const first = value.slice(comma + 1).trim();
+  return [first, last].filter(Boolean).join(" ");
 }

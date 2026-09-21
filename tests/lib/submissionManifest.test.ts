@@ -28,6 +28,17 @@ describe("parseSubmissionManifest", () => {
     });
   });
 
+  it("supports Canvas user IDs as a fallback manifest key", () => {
+    const manifest = parseSubmissionManifest(
+      "filename,canvas_user_id\npaper.pdf,894602",
+    );
+
+    expect(manifest.get("paper.pdf")).toEqual({
+      kind: "canvasUserId",
+      value: "894602",
+    });
+  });
+
   it("rejects duplicate filenames", () => {
     expect(() =>
       parseSubmissionManifest(

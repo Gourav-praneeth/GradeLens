@@ -41,7 +41,7 @@ export default async function RosterPage({ params, searchParams }: PageProps) {
 
   let students = course.students.filter((student) => {
     if (!query) return true;
-    return `${student.name} ${student.email ?? ""} ${student.studentNumber ?? ""} ${student.sisLoginId ?? ""}`.toLowerCase().includes(query);
+    return `${student.name} ${student.email ?? ""} ${student.studentNumber ?? ""} ${student.sisLoginId ?? ""} ${student.canvasUserId ?? ""}`.toLowerCase().includes(query);
   });
   if (sort === "id") students = [...students].sort((a, b) => (a.studentNumber ?? "").localeCompare(b.studentNumber ?? ""));
   else students = [...students].sort((a, b) => a.name.localeCompare(b.name));
@@ -101,6 +101,7 @@ export default async function RosterPage({ params, searchParams }: PageProps) {
                 <th>Student</th>
                 <th>Student ID</th>
                 <th>SIS Login</th>
+                <th>Canvas ID</th>
                 <th>Email</th>
                 <th>Status</th>
                 <th>Submissions</th>
@@ -127,6 +128,7 @@ export default async function RosterPage({ params, searchParams }: PageProps) {
                     </td>
                     <td>{student.studentNumber || "—"}</td>
                     <td>{student.sisLoginId || "—"}</td>
+                    <td>{student.canvasUserId || "—"}</td>
                     <td>{student.email || "—"}</td>
                     <td>
                       {student.enrollmentStatus === "inactive" ? "Inactive" : "Active"}

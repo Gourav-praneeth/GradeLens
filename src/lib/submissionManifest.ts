@@ -26,6 +26,10 @@ export function parseSubmissionManifest(
       aliases: ["sis login id", "sis login", "login id", "login"],
     },
     {
+      kind: "canvasUserId",
+      aliases: ["canvas user id", "canvas id"],
+    },
+    {
       kind: "studentNumber",
       aliases: ["student id", "student number", "sis user id"],
     },
@@ -43,7 +47,7 @@ export function parseSubmissionManifest(
 
   if (filenameIndex < 0 || !identity) {
     throw new Error(
-      'Manifest headers must include "filename" and one of "sis_login_id", "student_id", or "email".',
+      'Manifest headers must include "filename" and one of "sis_login_id", "canvas_user_id", "student_id", or "email".',
     );
   }
 

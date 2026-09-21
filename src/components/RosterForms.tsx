@@ -100,7 +100,8 @@ export function ImportRosterForm({ courseId }: { courseId: string }) {
         <span className="field-label">Upload roster CSV</span>
         <input className="field" name="csvFile" type="file" accept=".csv,text/csv" />
         <span className="mt-1 block text-xs text-muted">
-          Headers: Last Name, First Name, Student ID. Email is optional.
+          Canvas exports with Student, ID, SIS Login ID, and Section are supported. Generic rosters
+          may use Last Name, First Name, Student ID, and Email.
         </span>
       </label>
       <div className="flex items-center gap-3 text-xs uppercase tracking-wide text-muted">

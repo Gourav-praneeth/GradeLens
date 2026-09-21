@@ -21,6 +21,7 @@ const REQUIRED_FIELD_IDS = [
   "roster-student-name",
   "roster-student-id",
   "roster-sis-login",
+  "roster-canvas-user-id",
   "roster-student-email",
   "roster-import",
   "roster-canvas-course",

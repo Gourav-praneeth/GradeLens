@@ -12,7 +12,7 @@ Living list of what is built and what should come next. Update this file wheneve
 - Edit rubric criteria, point values, and full-credit descriptions
 - Upload student submissions as PDF or text
 - Import Canvas assignment submissions by exact Canvas user identity
-- Bulk-match uploads by SIS login, student ID, email, manifest, or unique roster name
+- Bulk-match uploads primarily by SIS login, with Canvas ID, student ID, email, manifest, and unique-name fallbacks
 - Review ambiguous or unmatched files before bulk grading
 - Grade one submission or all ungraded submissions
 - Show total score, per-criterion marks, and an explanation for every deduction
@@ -25,7 +25,7 @@ Living list of what is built and what should come next. Update this file wheneve
 - Stronger empty and error states when PDFs are scans or the model is unavailable
 - Instructor accounts (email and password)
 - Courses as first-class objects, with a roster of student names
-- Import course rosters from CSV with names, student IDs, and optional emails
+- Import generic or Canvas gradebook rosters from CSV, preserving Canvas ID and SIS Login ID separately
 - One-way Canvas roster sync with encrypted instructor tokens and non-destructive enrollment updates
 - Shared TA access on the same course and assignments
 - Submission names match the course roster when filenames look like student names

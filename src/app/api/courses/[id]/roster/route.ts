@@ -16,9 +16,15 @@ export async function GET(_request: Request, context: RouteContext) {
 
   const students = await prisma.student.findMany({ where: { courseId: id }, orderBy: { name: "asc" } });
   const csv = [
-    csvRow(["Name", "Student ID", "SIS Login", "Email"]),
+    csvRow(["Name", "Student ID", "SIS Login", "Canvas ID", "Email"]),
     ...students.map((student) =>
-      csvRow([student.name, student.studentNumber, student.sisLoginId, student.email]),
+      csvRow([
+        student.name,
+        student.studentNumber,
+        student.sisLoginId,
+        student.canvasUserId,
+        student.email,
+      ]),
     ),
   ].join("\n");
   return new NextResponse(csv, {

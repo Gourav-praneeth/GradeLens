@@ -157,6 +157,13 @@ export const HELP_SECTIONS: HelpSection[] = [
         example: "1234567890",
       },
       {
+        id: "roster-sis-login",
+        label: "SIS login",
+        requirement: "Automatic",
+        description: "The Canvas login identifier used for deterministic bulk-submission filename matching.",
+        details: "Canvas roster sync supplies this value. Name files like SIS_LOGIN_ID__paper.pdf.",
+      },
+      {
         id: "roster-student-email",
         label: "Student email",
         requirement: "Optional",
@@ -315,7 +322,27 @@ export const HELP_SECTIONS: HelpSection[] = [
         label: "Files",
         requirement: "Required",
         description: "One or more student PDF, TXT, or Markdown submissions.",
-        details: "Each file is limited to 10 MB and scanned PDFs require selectable text.",
+        details: "Each file is limited to 10 MB. Use SIS_LOGIN_ID__paper.pdf for deterministic bulk matching.",
+      },
+      {
+        id: "submission-manifest",
+        label: "Manifest CSV",
+        requirement: "Optional",
+        description: "Maps each uploaded filename to a SIS login, student ID, or email.",
+        example: "filename,sis_login_id\npaper.pdf,achen",
+      },
+      {
+        id: "submission-canvas-assignment",
+        label: "Canvas assignment ID",
+        requirement: "Optional",
+        description: "Imports supported attachments from the matching Canvas assignment using exact Canvas user IDs.",
+        details: "Use the number after /assignments/ in the Canvas assignment URL. Re-importing skips unchanged work.",
+      },
+      {
+        id: "submission-match",
+        label: "Match submission",
+        requirement: "Required",
+        description: "Assigns an ambiguous or unmatched file to one active roster student before bulk grading.",
       },
       {
         id: "grading-override-points",

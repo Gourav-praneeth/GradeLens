@@ -28,6 +28,8 @@ export async function POST(_request: Request, context: RouteContext) {
   const pending = await prisma.submission.findMany({
     where: {
       assignmentId: id,
+      studentId: { not: null },
+      matchStatus: "matched",
       status: { in: ["uploaded", "failed"] },
       extractedText: { not: "" },
     },
@@ -35,7 +37,14 @@ export async function POST(_request: Request, context: RouteContext) {
   });
 
   if (pending.length === 0) {
-    return jsonError("No ungraded submissions with extractable text.");
+    const unresolved = await prisma.submission.count({
+      where: { assignmentId: id, matchStatus: { not: "matched" } },
+    });
+    return jsonError(
+      unresolved > 0
+        ? `${unresolved} submissions need a student match before bulk grading.`
+        : "No ungraded submissions with extractable text.",
+    );
   }
 
   const errors: string[] = [];
@@ -51,5 +60,8 @@ export async function POST(_request: Request, context: RouteContext) {
     }
   }
 
-  return NextResponse.json({ graded, errors });
+  const unresolved = await prisma.submission.count({
+    where: { assignmentId: id, matchStatus: { not: "matched" } },
+  });
+  return NextResponse.json({ graded, errors, unresolved });
 }

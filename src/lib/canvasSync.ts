@@ -16,6 +16,7 @@ type ExistingStudent = {
   name: string;
   email: string | null;
   studentNumber: string | null;
+  sisLoginId: string | null;
   canvasUserId: string | null;
   rosterSource: string;
   enrollmentStatus: string;
@@ -27,6 +28,7 @@ type StudentUpdate = {
     name: string;
     email: string | null;
     studentNumber: string | null;
+    sisLoginId: string | null;
     canvasUserId: string;
     rosterSource: "canvas";
     enrollmentStatus: "active";
@@ -73,6 +75,7 @@ export function planCanvasRosterSync(
       name: student.name,
       email: student.email ?? match.email,
       studentNumber: student.studentNumber ?? match.studentNumber,
+      sisLoginId: student.sisLoginId ?? match.sisLoginId,
       canvasUserId: student.canvasUserId,
       rosterSource: "canvas",
       enrollmentStatus: "active",
@@ -81,6 +84,7 @@ export function planCanvasRosterSync(
       match.name === data.name &&
       match.email === data.email &&
       match.studentNumber === data.studentNumber &&
+      match.sisLoginId === data.sisLoginId &&
       match.canvasUserId === data.canvasUserId &&
       match.rosterSource === data.rosterSource &&
       match.enrollmentStatus === data.enrollmentStatus
@@ -123,6 +127,7 @@ export async function syncCanvasRoster(
       name: true,
       email: true,
       studentNumber: true,
+      sisLoginId: true,
       canvasUserId: true,
       rosterSource: true,
       enrollmentStatus: true,
@@ -145,6 +150,7 @@ export async function syncCanvasRoster(
           name: student.name,
           email: student.email,
           studentNumber: student.studentNumber,
+          sisLoginId: student.sisLoginId,
           canvasUserId: student.canvasUserId,
           rosterSource: "canvas",
           enrollmentStatus: "active",

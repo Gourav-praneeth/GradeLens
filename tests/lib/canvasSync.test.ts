@@ -27,7 +27,7 @@ describe("planCanvasRosterSync", () => {
       ],
       [
         canvasStudent("101", "Alex Chen", "S-1", "alex@school.edu"),
-        canvasStudent("102", "Jordan Lee", "S-2", "jordan@school.edu"),
+        canvasStudent("102", "Jordan Lee", "S-2", "jordan@school.edu", "jlee"),
         canvasStudent("103", "Sam Patel", null, "sam@school.edu"),
       ],
     );
@@ -40,6 +40,7 @@ describe("planCanvasRosterSync", () => {
     expect(plan.updates[0].data).toMatchObject({
       canvasUserId: "102",
       name: "Jordan Lee",
+      sisLoginId: "jlee",
       rosterSource: "canvas",
       enrollmentStatus: "active",
     });
@@ -116,6 +117,7 @@ function student(
     name: string;
     email: string | null;
     studentNumber: string | null;
+    sisLoginId: string | null;
     canvasUserId: string | null;
     rosterSource: string;
     enrollmentStatus: string;
@@ -126,6 +128,7 @@ function student(
     name: "Student",
     email: null,
     studentNumber: null,
+    sisLoginId: null,
     canvasUserId: null,
     rosterSource: "manual",
     enrollmentStatus: "active",
@@ -138,6 +141,7 @@ function canvasStudent(
   name: string,
   studentNumber: string | null,
   email: string | null,
+  sisLoginId: string | null = null,
 ) {
-  return { canvasUserId, name, studentNumber, email };
+  return { canvasUserId, name, studentNumber, sisLoginId, email };
 }

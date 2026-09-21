@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   CanvasApiError,
+  fetchCanvasSubmissionFiles,
   fetchCanvasStudents,
   normalizeCanvasBaseUrl,
 } from "@/lib/canvas";
@@ -94,12 +95,14 @@ describe("fetchCanvasStudents", () => {
         canvasUserId: "11",
         name: "Alex Chen",
         studentNumber: "S-11",
+        sisLoginId: null,
         email: "alex@school.edu",
       },
       {
         canvasUserId: "14",
         name: "Jordan Lee",
         studentNumber: null,
+        sisLoginId: "jordan@school.edu",
         email: "jordan@school.edu",
       },
     ]);
@@ -123,5 +126,62 @@ describe("fetchCanvasStudents", () => {
     ).rejects.toEqual(
       new CanvasApiError("The Canvas token does not have permission to read this roster."),
     );
+  });
+
+  it("maps supported Canvas submission attachments and skips unsupported work", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue(
+        new Response(
+          JSON.stringify([
+            {
+              id: 501,
+              user_id: 11,
+              submitted_at: "2026-09-20T12:00:00Z",
+              workflow_state: "submitted",
+              attachments: [
+                {
+                  display_name: "homework.pdf",
+                  url: "https://school.instructure.com/files/1/download",
+                  content_type: "application/pdf",
+                },
+              ],
+            },
+            {
+              id: 502,
+              user_id: 12,
+              submitted_at: "2026-09-20T12:00:00Z",
+              workflow_state: "submitted",
+              attachments: [
+                {
+                  display_name: "program.zip",
+                  url: "https://school.instructure.com/files/2/download",
+                  content_type: "application/zip",
+                },
+              ],
+            },
+          ]),
+        ),
+      ),
+    );
+
+    await expect(
+      fetchCanvasSubmissionFiles(
+        { baseUrl: "https://school.instructure.com", accessToken: "secret-token" },
+        "42",
+        "77",
+      ),
+    ).resolves.toEqual({
+      submissions: [
+        {
+          canvasSubmissionId: "501",
+          canvasUserId: "11",
+          submittedAt: "2026-09-20T12:00:00Z",
+          filename: "homework.pdf",
+          downloadUrl: "https://school.instructure.com/files/1/download",
+        },
+      ],
+      warnings: ["Canvas submission 502 has no supported PDF or text attachment."],
+    });
   });
 });

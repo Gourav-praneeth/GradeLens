@@ -51,7 +51,7 @@ docker run --rm -p 3000:3000 -v gradelens-data:/data -e GROQ_API_KEY=... gradele
 2. Add students manually, import a roster CSV, or connect Canvas under **Account** and sync a Canvas course roster.
 3. Create an assignment in that course and add questions plus official solutions (paste or PDF).
 4. Generate a rubric, then edit criteria and point values.
-5. Upload student work as PDF or `.txt`. Filenames like `alex-chen.pdf` match roster names.
+5. Import submissions from Canvas by exact user ID, or bulk-upload PDF/TXT files named like `SIS_LOGIN_ID__paper.pdf`. Ambiguous files stay in a review queue.
 6. Grade one paper or the whole stack. Each mark includes why points were taken off.
 7. Open **Review** to compare similar deductions, then export a Canvas or Gradescope CSV.
 

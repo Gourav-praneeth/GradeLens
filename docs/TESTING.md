@@ -133,6 +133,7 @@ This requires the personal Canvas connection above and a Canvas course containin
 **Checks**
 
 - SIS ID is stored as the GradeLens student ID when Canvas provides it.
+- Canvas `login_id` is stored separately as the SIS login for submission matching.
 - Canvas user ID, then SIS ID, then email are used to match existing students.
 - Manual and CSV students are never marked inactive by Canvas sync.
 - Inactive students retain profiles, submissions, and grades.
@@ -211,6 +212,7 @@ Leave **Student on roster** as “Match from filename” and upload all three fi
 - [`sample-work/sam-patel.txt`](sample-work/sam-patel.txt)
 
 Filenames like `alex-chen.txt` or `Alex_Chen.pdf` match roster names (hyphens, underscores, and extension are ignored).
+For a deterministic institutional match, use `SIS_LOGIN_ID__paper.pdf`, such as `achen__homework.pdf`.
 
 **Checks**
 
@@ -218,6 +220,36 @@ Filenames like `alex-chen.txt` or `Alex_Chen.pdf` match roster names (hyphens, u
 - Status is **Uploaded** and score is `—`.
 - Uploading a single file with the roster dropdown set attaches that student even if the filename is different.
 - Optional **Student name** field overrides the label when the file does not match.
+- A second submission for the same student is reported as a duplicate instead of being added.
+
+### Manifest and unresolved review
+
+1. Upload files with non-identifying names and a CSV containing `filename,sis_login_id`.
+2. Confirm the result reports matched, ambiguous, unmatched, duplicate, and rejected counts.
+3. Upload a filename that matches two students with the same full name. Confirm it says **Needs match** rather than choosing one.
+4. Select the correct student from the row and choose **Match**.
+
+**Checks**
+
+- Manifest mapping takes priority over filename matching.
+- SIS login, student ID, and email require exact matches; arbitrary filename fragments are not used.
+- **Grade ungraded** excludes unresolved submissions and reports how many still need review.
+
+### Import from Canvas
+
+This requires a connected Canvas account and a synced Canvas course roster.
+
+1. Open the assignment in Canvas and copy the number after `/assignments/` in its URL.
+2. Enter it under **Import from Canvas** and start the import.
+3. Confirm supported PDF/TXT/Markdown attachments map to students by Canvas user ID.
+4. Import again. Unchanged submissions should be counted without creating duplicates.
+5. Submit a newer attempt in Canvas and import again. The stored work updates and any old grade is cleared for explicit regrading.
+
+**Checks**
+
+- Unsupported or oversized attachments are skipped with warnings.
+- Canvas users absent from the active roster enter **Needs match**.
+- Existing local submissions for the same student are not overwritten.
 
 ### Scan / empty PDF
 

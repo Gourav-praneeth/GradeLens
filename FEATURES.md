@@ -11,6 +11,9 @@ Living list of what is built and what should come next. Update this file wheneve
 - Generate a rubric from the official solutions
 - Edit rubric criteria, point values, and full-credit descriptions
 - Upload student submissions as PDF or text
+- Import Canvas assignment submissions by exact Canvas user identity
+- Bulk-match uploads by SIS login, student ID, email, manifest, or unique roster name
+- Review ambiguous or unmatched files before bulk grading
 - Grade one submission or all ungraded submissions
 - Show total score, per-criterion marks, and an explanation for every deduction
 - Quote evidence from the student work next to each mark

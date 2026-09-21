@@ -9,7 +9,16 @@ export type CanvasStudent = {
   canvasUserId: string;
   name: string;
   studentNumber: string | null;
+  sisLoginId: string | null;
   email: string | null;
+};
+
+export type CanvasSubmissionFile = {
+  canvasSubmissionId: string;
+  canvasUserId: string;
+  submittedAt: string;
+  filename: string;
+  downloadUrl: string;
 };
 
 type CanvasUser = {
@@ -27,6 +36,19 @@ type CanvasEnrollment = {
   enrollment_state?: string;
   sis_user_id?: string | number | null;
   user?: CanvasUser;
+};
+
+type CanvasSubmission = {
+  id?: string | number;
+  user_id?: string | number;
+  submitted_at?: string | null;
+  workflow_state?: string;
+  attachments?: Array<{
+    display_name?: string;
+    filename?: string;
+    url?: string;
+    content_type?: string;
+  }>;
 };
 
 export class CanvasApiError extends Error {
@@ -106,11 +128,78 @@ export async function fetchCanvasStudents(
       canvasUserId,
       name,
       studentNumber: nullableString(user.sis_user_id ?? enrollment.sis_user_id),
+      sisLoginId: loginId,
       email: nullableString(user.email) ?? (loginId?.includes("@") ? loginId : null),
     });
   }
 
   return [...students.values()];
+}
+
+export async function fetchCanvasSubmissionFiles(
+  credentials: CanvasCredentials,
+  canvasCourseId: string,
+  canvasAssignmentId: string,
+): Promise<{ submissions: CanvasSubmissionFile[]; warnings: string[] }> {
+  const courseId = requiredCanvasId(canvasCourseId, "course");
+  const assignmentId = requiredCanvasId(canvasAssignmentId, "assignment");
+  const path =
+    `/api/v1/courses/${encodeURIComponent(courseId)}/assignments/` +
+    `${encodeURIComponent(assignmentId)}/submissions?include%5B%5D=user&per_page=100`;
+  const records = await canvasPaginatedRequest<CanvasSubmission>(credentials, path);
+  const submissions: CanvasSubmissionFile[] = [];
+  const warnings: string[] = [];
+
+  for (const record of records) {
+    const submissionId = nullableString(record.id);
+    const canvasUserId = nullableString(record.user_id);
+    const submittedAt = nullableString(record.submitted_at);
+    if (!submissionId || !canvasUserId || !submittedAt || record.workflow_state === "unsubmitted") {
+      continue;
+    }
+    const supported = (record.attachments ?? []).filter((attachment) =>
+      isSupportedSubmissionFile(
+        String(attachment.display_name ?? attachment.filename ?? ""),
+        attachment.content_type,
+      ),
+    );
+    const attachment = supported[0];
+    const filename = String(attachment?.display_name ?? attachment?.filename ?? "").trim();
+    const downloadUrl = String(attachment?.url ?? "").trim();
+    if (!attachment || !filename || !downloadUrl) {
+      warnings.push(`Canvas submission ${submissionId} has no supported PDF or text attachment.`);
+      continue;
+    }
+    if (supported.length > 1) {
+      warnings.push(`Canvas submission ${submissionId} has multiple files; only ${filename} was imported.`);
+    }
+    submissions.push({
+      canvasSubmissionId: submissionId,
+      canvasUserId,
+      submittedAt,
+      filename,
+      downloadUrl,
+    });
+  }
+
+  return { submissions, warnings };
+}
+
+export async function downloadCanvasSubmissionFile(
+  credentials: CanvasCredentials,
+  file: CanvasSubmissionFile,
+): Promise<Uint8Array> {
+  normalizeCanvasBaseUrl(file.downloadUrl);
+  const response = await canvasFetch(credentials, file.downloadUrl);
+  const length = Number(response.headers.get("content-length") ?? "0");
+  if (length > 10 * 1024 * 1024) {
+    throw new CanvasApiError(`${file.filename} is larger than 10 MB.`);
+  }
+  const bytes = new Uint8Array(await response.arrayBuffer());
+  if (bytes.byteLength > 10 * 1024 * 1024) {
+    throw new CanvasApiError(`${file.filename} is larger than 10 MB.`);
+  }
+  return bytes;
 }
 
 async function canvasPaginatedRequest<T>(
@@ -197,6 +286,26 @@ function parseNextLink(header: string | null): string | null {
 function nullableString(value: unknown): string | null {
   const text = value == null ? "" : String(value).trim();
   return text || null;
+}
+
+function requiredCanvasId(value: string, label: string): string {
+  const result = value.trim();
+  if (!result || result.length > 200) {
+    throw new Error(`Enter a valid Canvas ${label} ID.`);
+  }
+  return result;
+}
+
+function isSupportedSubmissionFile(filename: string, contentType?: string): boolean {
+  const lower = filename.toLowerCase();
+  return (
+    lower.endsWith(".pdf") ||
+    lower.endsWith(".txt") ||
+    lower.endsWith(".md") ||
+    contentType === "application/pdf" ||
+    contentType === "text/plain" ||
+    contentType === "text/markdown"
+  );
 }
 
 function isPrivateIp(hostname: string): boolean {

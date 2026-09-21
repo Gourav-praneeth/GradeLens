@@ -88,6 +88,7 @@ model Student {
   name             String
   email            String?
   studentNumber    String?
+  sisLoginId       String?
   canvasUserId     String?
   rosterSource     String       @default("manual")
   enrollmentStatus String       @default("active")
@@ -98,20 +99,21 @@ model Student {
 }
 
 model Assignment {
-  id            String       @id @default(cuid())
-  title         String
-  courseLabel   String?      @map("course")
-  courseId      String?
-  course        Course?      @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  questionsText String       @default("")
-  solutionsText String       @default("")
-  description   String       @default("")
-  dueAt         DateTime?
-  status        String       @default("draft")
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
-  rubric        Rubric?
-  submissions   Submission[]
+  id                 String       @id @default(cuid())
+  title              String
+  courseLabel        String?      @map("course")
+  courseId           String?
+  course             Course?      @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  questionsText      String       @default("")
+  solutionsText      String       @default("")
+  description        String       @default("")
+  dueAt              DateTime?
+  canvasAssignmentId String?
+  status             String       @default("draft")
+  createdAt          DateTime     @default(now())
+  updatedAt          DateTime     @updatedAt
+  rubric             Rubric?
+  submissions        Submission[]
 }
 
 model Rubric {
@@ -135,19 +137,26 @@ model RubricCriterion {
 }
 
 model Submission {
-  id             String       @id @default(cuid())
-  assignmentId   String
-  assignment     Assignment   @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
-  studentId      String?
-  student        Student?     @relation(fields: [studentId], references: [id], onDelete: SetNull)
-  studentLabel   String
-  originalName   String
-  storedPath     String
-  extractedText  String       @default("")
-  extractWarning String?
-  status         String       @default("uploaded")
-  createdAt      DateTime     @default(now())
-  gradeResult    GradeResult?
+  id                 String       @id @default(cuid())
+  assignmentId       String
+  assignment         Assignment   @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  studentId          String?
+  student            Student?     @relation(fields: [studentId], references: [id], onDelete: SetNull)
+  studentLabel       String
+  originalName       String
+  storedPath         String
+  extractedText      String       @default("")
+  extractWarning     String?
+  status             String       @default("uploaded")
+  source             String       @default("upload")
+  canvasSubmissionId String?
+  canvasSubmittedAt  DateTime?
+  matchMethod        String?
+  matchStatus        String       @default("unmatched")
+  createdAt          DateTime     @default(now())
+  gradeResult        GradeResult?
+
+  @@unique([assignmentId, canvasSubmissionId])
 }
 
 model GradeResult {

@@ -15,7 +15,12 @@ export async function GET(_request: Request, context: RouteContext) {
   if (access.error) return access.error;
 
   const students = await prisma.student.findMany({ where: { courseId: id }, orderBy: { name: "asc" } });
-  const csv = [csvRow(["Name", "Student ID", "Email"]), ...students.map((student) => csvRow([student.name, student.studentNumber, student.email]))].join("\n");
+  const csv = [
+    csvRow(["Name", "Student ID", "SIS Login", "Email"]),
+    ...students.map((student) =>
+      csvRow([student.name, student.studentNumber, student.sisLoginId, student.email]),
+    ),
+  ].join("\n");
   return new NextResponse(csv, {
     headers: {
       "Content-Type": "text/csv; charset=utf-8",

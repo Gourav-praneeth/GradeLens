@@ -3,15 +3,18 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const mocks = vi.hoisted(() => ({
   requireUser: vi.fn(),
   requireCourseAccess: vi.fn(),
+  guardAssignment: vi.fn(),
   saveCanvasCredentials: vi.fn(),
   clearCanvasCredentials: vi.fn(),
   canvasCredentialStatus: vi.fn(),
   syncCanvasRoster: vi.fn(),
+  importCanvasSubmissions: vi.fn(),
 }));
 
 vi.mock("@/lib/access", () => ({
   requireUser: mocks.requireUser,
   requireCourseAccess: mocks.requireCourseAccess,
+  guardAssignment: mocks.guardAssignment,
 }));
 
 vi.mock("@/lib/canvasCredentials", () => ({
@@ -24,7 +27,12 @@ vi.mock("@/lib/canvasSync", () => ({
   syncCanvasRoster: mocks.syncCanvasRoster,
 }));
 
+vi.mock("@/lib/canvasSubmissionImport", () => ({
+  importCanvasSubmissions: mocks.importCanvasSubmissions,
+}));
+
 import { PUT as saveConnection } from "@/app/api/account/canvas/route";
+import { POST as importSubmissions } from "@/app/api/assignments/[id]/canvas-import/route";
 import { POST as syncRoster } from "@/app/api/courses/[id]/canvas-sync/route";
 
 describe("Canvas API routes", () => {
@@ -37,6 +45,11 @@ describe("Canvas API routes", () => {
     mocks.requireCourseAccess.mockResolvedValue({
       member: { role: "owner" },
       error: null,
+    });
+    mocks.guardAssignment.mockResolvedValue({
+      ok: true,
+      user: { id: "user-1" },
+      assignment: { id: "assignment-1", courseId: "course-1" },
     });
     mocks.canvasCredentialStatus.mockResolvedValue({
       configured: true,
@@ -108,6 +121,32 @@ describe("Canvas API routes", () => {
 
     expect(response.status).toBe(400);
     expect(mocks.syncCanvasRoster).not.toHaveBeenCalled();
+  });
+
+  it("imports a linked Canvas assignment idempotently", async () => {
+    mocks.importCanvasSubmissions.mockResolvedValue({
+      imported: 3,
+      updated: 0,
+      unchanged: 2,
+      unmatched: 0,
+      duplicates: 0,
+      rejected: 0,
+      warnings: [],
+    });
+
+    const response = await importSubmissions(
+      jsonRequest("http://localhost/api/assignments/assignment-1/canvas-import", {
+        canvasAssignmentId: "77",
+      }),
+      { params: Promise.resolve({ id: "assignment-1" }) },
+    );
+
+    expect(response.status).toBe(200);
+    expect(mocks.importCanvasSubmissions).toHaveBeenCalledWith(
+      "user-1",
+      "assignment-1",
+      "77",
+    );
   });
 });
 

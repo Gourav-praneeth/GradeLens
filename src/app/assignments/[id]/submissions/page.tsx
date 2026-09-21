@@ -2,7 +2,12 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AssignmentNav } from "@/components/AssignmentNav";
 import { ExportLinks } from "@/components/ExportLinks";
-import { GradeAllButton, SubmissionUploader } from "@/components/SubmissionPanel";
+import {
+  CanvasSubmissionImporter,
+  GradeAllButton,
+  SubmissionMatchForm,
+  SubmissionUploader,
+} from "@/components/SubmissionPanel";
 import { prisma } from "@/lib/db";
 import { formatScore } from "@/lib/format";
 import { scanHelpText } from "@/lib/errors";
@@ -45,12 +50,32 @@ export default async function SubmissionsPage({ params }: PageProps) {
   if (!assignment) notFound();
 
   const ungraded = assignment.submissions.filter(
-    (item) => !item.gradeResult && item.extractedText.trim(),
+    (item) =>
+      item.matchStatus === "matched" &&
+      item.studentId &&
+      !item.gradeResult &&
+      item.extractedText.trim(),
   ).length;
+  const unresolved = assignment.submissions.filter(
+    (item) => item.matchStatus !== "matched" || !item.studentId,
+  );
   const scans = assignment.submissions.filter((item) => !item.extractedText.trim()).length;
   const needsRegrade =
     Boolean(assignment.rubric) &&
-    assignment.submissions.some((item) => item.extractedText.trim() && !item.gradeResult);
+    assignment.submissions.some(
+      (item) =>
+        item.matchStatus === "matched" &&
+        item.studentId &&
+        item.extractedText.trim() &&
+        !item.gradeResult,
+    );
+  const roster =
+    assignment.course?.students.map((student) => ({
+      id: student.id,
+      name: student.name,
+      studentNumber: student.studentNumber,
+      sisLoginId: student.sisLoginId,
+    })) ?? [];
 
   return (
     <div className="space-y-5">
@@ -79,12 +104,30 @@ export default async function SubmissionsPage({ params }: PageProps) {
         </p>
       ) : null}
 
+      {unresolved.length > 0 ? (
+        <p className="card px-5 py-3 text-sm text-pen">
+          {unresolved.length} {unresolved.length === 1 ? "submission needs" : "submissions need"} a
+          student match before bulk grading.
+        </p>
+      ) : null}
+
       <section className="card px-5 py-6 sm:px-8">
-        <h2 className="text-sm font-semibold">Upload</h2>
+        <h2 className="text-sm font-semibold">Import from Canvas</h2>
+        <div className="mt-4">
+          <CanvasSubmissionImporter
+            assignmentId={assignment.id}
+            initialCanvasAssignmentId={assignment.canvasAssignmentId}
+            enabled={Boolean(assignment.course?.canvasCourseId)}
+          />
+        </div>
+      </section>
+
+      <section className="card px-5 py-6 sm:px-8">
+        <h2 className="text-sm font-semibold">Upload files</h2>
         <div className="mt-4">
           <SubmissionUploader
             assignmentId={assignment.id}
-            roster={assignment.course?.students.map((student) => ({ id: student.id, name: student.name })) ?? []}
+            roster={roster}
           />
         </div>
         <div className="mt-5 border-t border-line pt-5">
@@ -93,7 +136,9 @@ export default async function SubmissionsPage({ params }: PageProps) {
             <p className="mt-2 text-sm text-muted">Generate and save a rubric before grading.</p>
           ) : ungraded === 0 && assignment.submissions.length > 0 ? (
             <p className="mt-2 text-sm text-muted">
-              Nothing left to grade automatically. Scan PDFs stay ungraded until they have extractable text.
+              {unresolved.length > 0
+                ? "Match unresolved submissions before bulk grading."
+                : "Nothing left to grade automatically. Scan PDFs stay ungraded until they have extractable text."}
             </p>
           ) : null}
         </div>
@@ -107,6 +152,7 @@ export default async function SubmissionsPage({ params }: PageProps) {
             {assignment.submissions.map((submission) => {
               const failed = submission.status === "failed";
               const noText = !submission.extractedText.trim();
+              const needsMatch = submission.matchStatus !== "matched" || !submission.studentId;
               return (
                 <li
                   key={submission.id}
@@ -116,16 +162,28 @@ export default async function SubmissionsPage({ params }: PageProps) {
                     <p className="font-semibold">{studentDisplayName(submission)}</p>
                     <p className="text-sm text-muted">
                       {submission.originalName}
+                      {submission.source === "canvas" ? " · Canvas" : ""}
                       {noText ? ` · ${scanHelpText(submission.extractWarning)}` : ""}
                     </p>
                   </div>
                   <div className="flex items-center gap-3">
+                    {needsMatch ? (
+                      <SubmissionMatchForm
+                        assignmentId={assignment.id}
+                        submissionId={submission.id}
+                        roster={roster}
+                      />
+                    ) : null}
                     <span
                       className={
-                        failed || noText ? "status status-bad" : submission.gradeResult ? "status status-ok" : "status"
+                        needsMatch || failed || noText
+                          ? "status status-bad"
+                          : submission.gradeResult
+                            ? "status status-ok"
+                            : "status"
                       }
                     >
-                      {noText ? "No text" : statusLabel(submission.status)}
+                      {needsMatch ? "Needs match" : noText ? "No text" : statusLabel(submission.status)}
                     </span>
                     <p className="min-w-16 text-right font-mono text-sm tabular-nums text-mark">
                       {submission.gradeResult

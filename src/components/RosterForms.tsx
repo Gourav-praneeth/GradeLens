@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { readError } from "@/lib/api";
@@ -115,6 +116,96 @@ export function ImportRosterForm({ courseId }: { courseId: string }) {
       <button className="btn btn-ghost" type="submit" disabled={pending}>
         {pending ? "Importing…" : "Import students"}
       </button>
+    </form>
+  );
+}
+
+export function CanvasRosterSyncForm({
+  courseId,
+  configured,
+  initialCanvasCourseId,
+  lastSyncedAt,
+}: {
+  courseId: string;
+  configured: boolean;
+  initialCanvasCourseId: string | null;
+  lastSyncedAt: string | null;
+}) {
+  const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
+  const [result, setResult] = useState<string | null>(null);
+  const [pending, setPending] = useState(false);
+
+  if (!configured) {
+    return (
+      <p className="text-sm text-muted">
+        <Link href="/account#canvas-key" className="underline">
+          Connect Canvas in Account settings
+        </Link>{" "}
+        before syncing this roster.
+      </p>
+    );
+  }
+
+  async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const form = event.currentTarget;
+    setError(null);
+    setResult(null);
+    setPending(true);
+    try {
+      const canvasCourseId = String(new FormData(form).get("canvasCourseId") ?? "");
+      const response = await fetch(`/api/courses/${courseId}/canvas-sync`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ canvasCourseId }),
+      });
+      if (!response.ok) throw new Error(await readError(response));
+      const data = (await response.json()) as {
+        added: number;
+        updated: number;
+        unchanged: number;
+        inactivated: number;
+        totalActive: number;
+      };
+      setResult(
+        `Synced ${data.totalActive} active students: ${data.added} added, ${data.updated} updated, ${data.unchanged} unchanged, ${data.inactivated} marked inactive.`,
+      );
+      router.refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not sync the Canvas roster.");
+    } finally {
+      setPending(false);
+    }
+  }
+
+  return (
+    <form onSubmit={onSubmit} className="space-y-3">
+      <div className="flex flex-wrap items-end gap-3">
+        <label className="min-w-48 flex-1">
+          <span className="field-label">Canvas course ID</span>
+          <input
+            className="field"
+            name="canvasCourseId"
+            required
+            defaultValue={initialCanvasCourseId ?? ""}
+            placeholder="12345"
+          />
+        </label>
+        <button className="btn btn-primary" type="submit" disabled={pending}>
+          {pending ? "Syncing…" : "Sync Canvas roster"}
+        </button>
+      </div>
+      <p className="text-xs text-muted">
+        Use the number in the Canvas course URL. Only Canvas-managed students can be marked inactive.
+      </p>
+      {lastSyncedAt ? (
+        <p className="text-xs text-muted">
+          Last synced {new Date(lastSyncedAt).toLocaleString()}.
+        </p>
+      ) : null}
+      {result ? <p className="text-sm text-mark">{result}</p> : null}
+      {error ? <p className="text-sm text-pen">{error}</p> : null}
     </form>
   );
 }

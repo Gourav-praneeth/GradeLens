@@ -8,18 +8,20 @@ datasource db {
 }
 
 model User {
-  id              String         @id @default(cuid())
-  email           String         @unique
-  name            String
-  passwordHash    String
-  emailVerifiedAt DateTime?
-  llmProvider     String?
-  llmKeyCipher    String?
-  createdAt       DateTime       @default(now())
-  sessions        Session[]
-  authTokens      AuthToken[]
-  memberships     CourseMember[]
-  feedback        Feedback[]
+  id                String         @id @default(cuid())
+  email             String         @unique
+  name              String
+  passwordHash      String
+  emailVerifiedAt   DateTime?
+  llmProvider       String?
+  llmKeyCipher      String?
+  canvasBaseUrl     String?
+  canvasTokenCipher String?
+  createdAt         DateTime       @default(now())
+  sessions          Session[]
+  authTokens        AuthToken[]
+  memberships       CourseMember[]
+  feedback          Feedback[]
 }
 
 model AuthToken {
@@ -42,18 +44,20 @@ model Session {
 }
 
 model Course {
-  id          String         @id @default(cuid())
-  name        String
-  code        String?
-  semester    String?
-  description String        @default("")
-  accent      String        @default("#1c4d4a")
-  status      String        @default("active")
-  createdAt   DateTime      @default(now())
-  members     CourseMember[]
-  invites     CourseInvite[]
-  students    Student[]
-  assignments Assignment[]
+  id                 String         @id @default(cuid())
+  name               String
+  code               String?
+  semester           String?
+  description        String         @default("")
+  accent             String         @default("#1c4d4a")
+  status             String         @default("active")
+  canvasCourseId     String?
+  canvasLastSyncedAt DateTime?
+  createdAt          DateTime       @default(now())
+  members            CourseMember[]
+  invites            CourseInvite[]
+  students           Student[]
+  assignments        Assignment[]
 }
 
 model CourseMember {
@@ -73,19 +77,24 @@ model CourseInvite {
   email     String
   role      String   @default("ta")
   createdAt DateTime @default(now())
-  course    Course    @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
 
   @@unique([courseId, email])
 }
 
 model Student {
-  id            String       @id @default(cuid())
-  courseId      String
-  name          String
-  email         String?
-  studentNumber String?
-  course        Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  submissions   Submission[]
+  id               String       @id @default(cuid())
+  courseId         String
+  name             String
+  email            String?
+  studentNumber    String?
+  canvasUserId     String?
+  rosterSource     String       @default("manual")
+  enrollmentStatus String       @default("active")
+  course           Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  submissions      Submission[]
+
+  @@unique([courseId, canvasUserId])
 }
 
 model Assignment {
@@ -107,10 +116,10 @@ model Assignment {
 
 model Rubric {
   id           String            @id @default(cuid())
-  assignmentId String           @unique
+  assignmentId String            @unique
   assignment   Assignment        @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
-  createdAt    DateTime         @default(now())
-  updatedAt    DateTime         @updatedAt
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
   criteria     RubricCriterion[]
 }
 
@@ -155,11 +164,11 @@ model GradeResult {
 model CriterionScore {
   id                 String          @id @default(cuid())
   gradeResultId      String
-  gradeResult        GradeResult      @relation(fields: [gradeResultId], references: [id], onDelete: Cascade)
+  gradeResult        GradeResult     @relation(fields: [gradeResultId], references: [id], onDelete: Cascade)
   criterionId        String
-  criterion          RubricCriterion  @relation(fields: [criterionId], references: [id], onDelete: Cascade)
+  criterion          RubricCriterion @relation(fields: [criterionId], references: [id], onDelete: Cascade)
   pointsAwarded      Float
-  modelPointsAwarded Float            @default(0)
+  modelPointsAwarded Float           @default(0)
   overrideNote       String?
   deductionReason    String
   evidenceQuote      String?

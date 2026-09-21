@@ -63,6 +63,19 @@ If email is not configured, the page explains that this server cannot send mail.
 - **Remove key** clears the personal key. If `.env` still has a key, grading can use that fallback.
 - A second instructor’s key is stored on their account only.
 
+### Personal Canvas connection
+
+1. In Canvas, open **Account → Settings → Approved Integrations** and create an access token.
+2. In GradeLens, open **Account → Canvas connection**.
+3. Enter the institution URL, such as `https://school.instructure.com`, paste the token, then **Verify and save**.
+4. Confirm the page shows the normalized institution URL and only a masked token hint.
+
+**Checks**
+
+- HTTP, localhost, and private-network Canvas URLs are rejected.
+- An invalid or unauthorized token is not saved.
+- **Remove connection** clears the personal Canvas credentials.
+
 ### Feedback
 
 1. In the course sidebar, **Feedback** is above **Account**.
@@ -106,6 +119,24 @@ For CSV import, upload a file with `Last Name,First Name,Student ID` headers. `E
 - Names show in the roster list.
 - CSV imports preserve student IDs and optional emails.
 - **Remove** drops a student from the roster (existing submissions keep their display name).
+
+### Canvas roster sync
+
+This requires the personal Canvas connection above and a Canvas course containing active student enrollments.
+
+1. Open **Roster → Canvas roster sync**.
+2. Enter the number after `/courses/` in the Canvas course URL and select **Sync Canvas roster**.
+3. Confirm the result reports added, updated, unchanged, and inactive counts.
+4. Change a Canvas student's name or email and sync again; the GradeLens row should update without duplicating it.
+5. Conclude a Canvas enrollment and sync again; that Canvas-managed student should become **Inactive**.
+
+**Checks**
+
+- SIS ID is stored as the GradeLens student ID when Canvas provides it.
+- Canvas user ID, then SIS ID, then email are used to match existing students.
+- Manual and CSV students are never marked inactive by Canvas sync.
+- Inactive students retain profiles, submissions, and grades.
+- A zero-student response makes no roster changes.
 
 ### Shared TA access
 

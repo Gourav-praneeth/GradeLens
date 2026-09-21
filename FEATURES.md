@@ -23,6 +23,7 @@ Living list of what is built and what should come next. Update this file wheneve
 - Instructor accounts (email and password)
 - Courses as first-class objects, with a roster of student names
 - Import course rosters from CSV with names, student IDs, and optional emails
+- One-way Canvas roster sync with encrypted instructor tokens and non-destructive enrollment updates
 - Shared TA access on the same course and assignments
 - Submission names match the course roster when filenames look like student names
 - Class-wide review of similar deductions and a score distribution

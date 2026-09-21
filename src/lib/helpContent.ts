@@ -18,7 +18,7 @@ export const HELP_SECTIONS: HelpSection[] = [
   {
     id: "accounts",
     title: "Accounts and sign-in",
-    summary: "Create an account, sign in, recover access, and configure your personal grading provider.",
+    summary: "Create an account, recover access, and configure personal grading and Canvas connections.",
     fields: [
       {
         id: "account-name",
@@ -73,6 +73,20 @@ export const HELP_SECTIONS: HelpSection[] = [
         requirement: "Required",
         description: "A secret credential issued by the selected AI provider.",
         details: "The key is encrypted at rest and is never shown in full after saving. Removing it disables that personal provider key.",
+      },
+      {
+        id: "account-canvas-url",
+        label: "Canvas URL",
+        requirement: "Required",
+        description: "The HTTPS address for your institution's Canvas site.",
+        example: "https://school.instructure.com",
+      },
+      {
+        id: "account-canvas-token",
+        label: "Canvas access token",
+        requirement: "Required",
+        description: "A personal Canvas token used only to read course rosters.",
+        details: "GradeLens verifies and encrypts the token. Create one in Canvas under Account, Settings, and Approved Integrations.",
       },
     ],
   },
@@ -155,6 +169,21 @@ export const HELP_SECTIONS: HelpSection[] = [
         description: "Uploads a CSV roster or adds several students with one name on each line.",
         details: 'CSV headers may use "Name", or "First Name" and "Last Name". "Student ID" and "Email" are optional.',
         example: "Last Name,First Name,Student ID\nChen,Alex,123456",
+      },
+      {
+        id: "roster-canvas-course",
+        label: "Canvas course ID",
+        requirement: "Required",
+        description: "Identifies the Canvas course whose active student enrollments should be synchronized.",
+        details: "Use the number shown after /courses/ in the Canvas course URL.",
+        example: "12345",
+      },
+      {
+        id: "roster-canvas-sync",
+        label: "Sync Canvas roster",
+        requirement: "Optional",
+        description: "Adds and updates active Canvas students and marks missing Canvas-managed students inactive.",
+        details: "Manual and CSV students are never marked inactive by Canvas sync, and existing submissions are preserved.",
       },
       {
         id: "roster-search",

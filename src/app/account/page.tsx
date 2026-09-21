@@ -1,7 +1,9 @@
 import { redirect } from "next/navigation";
+import { CanvasKeyForm } from "@/components/CanvasKeyForm";
 import { LlmKeyForm } from "@/components/LlmKeyForm";
 import { LogoutButton } from "@/components/LogoutButton";
 import { getCurrentUser } from "@/lib/auth";
+import { canvasCredentialStatus } from "@/lib/canvasCredentials";
 import { llmKeyStatus } from "@/lib/llmKeys";
 
 export const dynamic = "force-dynamic";
@@ -9,7 +11,10 @@ export const dynamic = "force-dynamic";
 export default async function AccountPage() {
   const user = await getCurrentUser();
   if (!user) redirect("/login");
-  const llm = await llmKeyStatus(user.id);
+  const [llm, canvas] = await Promise.all([
+    llmKeyStatus(user.id),
+    canvasCredentialStatus(user.id),
+  ]);
 
   return (
     <div className="page-wrap space-y-5">
@@ -24,6 +29,9 @@ export default async function AccountPage() {
       </section>
       <section className="card px-5 py-6">
         <LlmKeyForm initial={llm} />
+      </section>
+      <section className="card px-5 py-6">
+        <CanvasKeyForm initial={canvas} />
       </section>
     </div>
   );

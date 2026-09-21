@@ -26,7 +26,10 @@ export async function POST(request: Request, context: RouteContext) {
     }
 
     const roster = await prisma.student.findMany({
-      where: { courseId: access.assignment.courseId },
+      where: {
+        courseId: access.assignment.courseId,
+        enrollmentStatus: { not: "inactive" },
+      },
     });
     const selectedId = String(form.get("studentId") ?? "").trim();
     const selected = roster.find((student) => student.id === selectedId) ?? null;

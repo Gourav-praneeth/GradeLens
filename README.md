@@ -47,11 +47,12 @@ docker run --rm -p 3000:3000 -v gradelens-data:/data -e GROQ_API_KEY=... gradele
 
 ## How it works
 
-1. Sign up (and verify your email if this server sends mail), save your Groq, OpenAI, or Anthropic key under **Account**, then create a course (and optionally a student roster).
-2. Create an assignment in that course and add questions plus official solutions (paste or PDF).
-3. Generate a rubric, then edit criteria and point values.
-4. Upload student work as PDF or `.txt`. Filenames like `alex-chen.pdf` match roster names.
-5. Grade one paper or the whole stack. Each mark includes why points were taken off.
-6. Open **Review** to compare similar deductions, then export a Canvas or Gradescope CSV.
+1. Sign up (and verify your email if this server sends mail), save your Groq, OpenAI, or Anthropic key under **Account**, then create a course.
+2. Add students manually, import a roster CSV, or connect Canvas under **Account** and sync a Canvas course roster.
+3. Create an assignment in that course and add questions plus official solutions (paste or PDF).
+4. Generate a rubric, then edit criteria and point values.
+5. Upload student work as PDF or `.txt`. Filenames like `alex-chen.pdf` match roster names.
+6. Grade one paper or the whole stack. Each mark includes why points were taken off.
+7. Open **Review** to compare similar deductions, then export a Canvas or Gradescope CSV.
 
 Invite other TAs from the course page. Scanned PDFs with no selectable text will show a warning. Image / handwriting support is planned for a later phase.

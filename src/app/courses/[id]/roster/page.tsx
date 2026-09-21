@@ -1,8 +1,14 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { ImportRosterForm, RemoveStudentButton, StudentRosterForm } from "@/components/RosterForms";
+import {
+  CanvasRosterSyncForm,
+  ImportRosterForm,
+  RemoveStudentButton,
+  StudentRosterForm,
+} from "@/components/RosterForms";
 import { getCourseMembership } from "@/lib/access";
 import { getCurrentUser } from "@/lib/auth";
+import { canvasCredentialStatus } from "@/lib/canvasCredentials";
 import { prisma } from "@/lib/db";
 import { formatPoints } from "@/lib/format";
 
@@ -18,14 +24,20 @@ export default async function RosterPage({ params, searchParams }: PageProps) {
   const { q, sort } = await searchParams;
   const query = q?.trim().toLowerCase() ?? "";
 
-  const course = await prisma.course.findUnique({
-    where: { id },
-    include: {
-      assignments: { include: { submissions: { include: { gradeResult: true } } } },
-      students: { include: { submissions: { include: { gradeResult: true } } } },
-    },
-  });
+  const [course, canvas] = await Promise.all([
+    prisma.course.findUnique({
+      where: { id },
+      include: {
+        assignments: { include: { submissions: { include: { gradeResult: true } } } },
+        students: { include: { submissions: { include: { gradeResult: true } } } },
+      },
+    }),
+    canvasCredentialStatus(user.id),
+  ]);
   if (!course) notFound();
+  const activeCount = course.students.filter(
+    (student) => student.enrollmentStatus !== "inactive",
+  ).length;
 
   let students = course.students.filter((student) => {
     if (!query) return true;
@@ -39,7 +51,7 @@ export default async function RosterPage({ params, searchParams }: PageProps) {
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="font-read text-3xl font-semibold tracking-tight">Roster</h1>
-          <p className="mt-1 text-sm text-muted">{course.students.length} enrolled</p>
+          <p className="mt-1 text-sm text-muted">{activeCount} active · {course.students.length} total</p>
         </div>
         <a href={`/api/courses/${course.id}/roster`} className="btn btn-ghost">
           Export roster
@@ -61,6 +73,17 @@ export default async function RosterPage({ params, searchParams }: PageProps) {
         <h2 className="text-sm font-semibold">Add student</h2>
         <div className="mt-3">
           <StudentRosterForm courseId={course.id} />
+        </div>
+      </section>
+      <section className="card px-5 py-5">
+        <h2 className="text-sm font-semibold">Canvas roster sync</h2>
+        <div className="mt-3">
+          <CanvasRosterSyncForm
+            courseId={course.id}
+            configured={canvas.configured}
+            initialCanvasCourseId={course.canvasCourseId}
+            lastSyncedAt={course.canvasLastSyncedAt?.toISOString() ?? null}
+          />
         </div>
       </section>
       <section className="card px-5 py-5">
@@ -103,7 +126,12 @@ export default async function RosterPage({ params, searchParams }: PageProps) {
                     </td>
                     <td>{student.studentNumber || "—"}</td>
                     <td>{student.email || "—"}</td>
-                    <td>Enrolled</td>
+                    <td>
+                      {student.enrollmentStatus === "inactive" ? "Inactive" : "Active"}
+                      {student.rosterSource === "canvas" ? (
+                        <span className="ml-2 text-xs text-muted">Canvas</span>
+                      ) : null}
+                    </td>
                     <td className="font-mono tabular-nums">
                       {student.submissions.length}/{course.assignments.length}
                     </td>

@@ -28,7 +28,14 @@ export default async function SubmissionsPage({ params }: PageProps) {
     where: { id },
     include: {
       rubric: true,
-      course: { include: { students: { orderBy: { name: "asc" } } } },
+      course: {
+        include: {
+          students: {
+            where: { enrollmentStatus: { not: "inactive" } },
+            orderBy: { name: "asc" },
+          },
+        },
+      },
       submissions: {
         orderBy: { createdAt: "asc" },
         include: { student: true, gradeResult: true },

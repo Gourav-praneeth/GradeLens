@@ -95,12 +95,42 @@ export function matchSubmissionToRoster(
 
   const normalizedName = normalizeLoose(base);
   if (!normalizedName) return { status: "unmatched", candidates: [] };
-  const nameCandidates = roster.filter(
+  const exactNameCandidates = roster.filter(
     (student) => normalizeLoose(student.name) === normalizedName,
   );
+  if (exactNameCandidates.length > 0) {
+    return resultFor(exactNameCandidates, "name");
+  }
+
+  const filenameTokens = nameTokens(base);
+  const prefixedNames = roster.flatMap((student) => {
+    const studentTokens = nameTokens(student.name);
+    if (
+      studentTokens.length < 2 ||
+      studentTokens.length > filenameTokens.length ||
+      !studentTokens.every((token, index) => token === filenameTokens[index])
+    ) {
+      return [];
+    }
+    return [{ student, tokenCount: studentTokens.length }];
+  });
+  const longestName = Math.max(0, ...prefixedNames.map((item) => item.tokenCount));
+  const nameCandidates = prefixedNames
+    .filter((item) => item.tokenCount === longestName)
+    .map((item) => item.student);
   return nameCandidates.length > 0
     ? resultFor(nameCandidates, "name")
     : { status: "unmatched", candidates: [] };
+}
+
+function nameTokens(value: string): string[] {
+  return value
+    .replace(/\.[^.]+$/, "")
+    .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .match(/[a-z0-9]+/g) ?? [];
 }
 
 function normalizeLoose(value: string): string {

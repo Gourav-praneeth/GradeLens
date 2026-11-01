@@ -270,18 +270,41 @@ export function GradeAllButton({ assignmentId, disabled }: { assignmentId: strin
     setNotice(null);
     setPending(true);
     try {
-      const response = await fetch(`/api/assignments/${assignmentId}/grade-all`, { method: "POST" });
-      if (!response.ok) {
-        throw new Error(await readError(response));
+      let graded = 0;
+      let remaining = 1;
+      let unresolved = 0;
+      const errors: string[] = [];
+
+      while (remaining > 0 && errors.length === 0) {
+        const response = await fetch(`/api/assignments/${assignmentId}/grade-all`, { method: "POST" });
+        if (!response.ok) {
+          throw new Error(await readError(response));
+        }
+        const data = (await response.json()) as {
+          graded: number;
+          errors?: string[];
+          unresolved?: number;
+          remaining?: number;
+        };
+        graded += data.graded;
+        remaining = data.remaining ?? 0;
+        unresolved = data.unresolved ?? 0;
+        errors.push(...(data.errors ?? []));
+        setNotice(
+          remaining > 0 && errors.length === 0
+            ? `Graded ${graded}. ${remaining} remaining…`
+            : `Graded ${graded}.`,
+        );
+        if (data.graded === 0) break;
       }
-      const data = (await response.json()) as { graded: number; errors?: string[]; unresolved?: number };
-      const unresolved = data.unresolved
-        ? ` ${data.unresolved} submissions still need a student match.`
+
+      const unresolvedNotice = unresolved
+        ? ` ${unresolved} submissions still need a student match.`
         : "";
       setNotice(
-        data.errors?.length
-          ? `Graded ${data.graded}. ${data.errors.join(" ")}${unresolved}`
-          : `Graded ${data.graded} ${data.graded === 1 ? "submission" : "submissions"}.${unresolved}`,
+        errors.length
+          ? `Graded ${graded}. ${errors.join(" ")}${unresolvedNotice}`
+          : `Graded ${graded} ${graded === 1 ? "submission" : "submissions"}.${unresolvedNotice}`,
       );
       router.refresh();
     } catch (err) {

@@ -34,6 +34,7 @@ describe("clusterDeductions", () => {
 
     expect(clusters).toHaveLength(1);
     expect(clusters[0].inconsistent).toBe(true);
+    expect(clusters[0].comparable).toBe(true);
     expect(clusters[0].rows).toHaveLength(2);
   });
 
@@ -59,6 +60,24 @@ describe("clusterDeductions", () => {
       },
     ]);
 
+    expect(clusters[0].inconsistent).toBe(false);
+    expect(clusters[0].comparable).toBe(true);
+  });
+
+  it("marks a one-student deduction as a single case, not a same-mark comparison", () => {
+    const clusters = clusterDeductions([
+      {
+        submissionId: "s1",
+        studentName: "Alex Chen",
+        criterionId: "c1",
+        criterionLabel: "Q1",
+        maxPoints: 2,
+        pointsAwarded: 1,
+        deductionReason: "Missing the base case.",
+      },
+    ]);
+
+    expect(clusters[0].comparable).toBe(false);
     expect(clusters[0].inconsistent).toBe(false);
   });
 });

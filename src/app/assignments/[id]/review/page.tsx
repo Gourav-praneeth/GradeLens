@@ -88,8 +88,11 @@ export default async function ReviewPage({ params }: PageProps) {
               <p className="text-sm text-muted">
                 {graded.length} graded ·{" "}
                 {inconsistent.length === 0
-                  ? "No conflicting deductions found"
+                  ? "No repeated-deduction score conflicts found"
                   : `${inconsistent.length} ${inconsistent.length === 1 ? "cluster needs" : "clusters need"} a look`}
+              </p>
+              <p className="mt-1 text-xs text-muted">
+                Automated grouping can miss equivalent answers or differently worded reasons. Review every deduction before export.
               </p>
             </div>
             <ul className="grid gap-0 sm:grid-cols-4">
@@ -119,8 +122,10 @@ export default async function ReviewPage({ params }: PageProps) {
                       <span className="status status-bad">
                         {formatPoints(cluster.minPoints)}–{formatPoints(cluster.maxPointsAwarded)} pts
                       </span>
-                    ) : (
+                    ) : cluster.comparable ? (
                       <span className="status status-ok">Same mark</span>
+                    ) : (
+                      <span className="status">Single case</span>
                     )}
                   </div>
                   <ul className="mt-4 space-y-2">

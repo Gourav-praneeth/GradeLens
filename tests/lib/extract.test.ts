@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { extractDocument } from "@/lib/extract";
+import { extractDocument, normalizeExtractedText } from "@/lib/extract";
 
 describe("extractDocument", () => {
   it("reads a text file", async () => {
@@ -17,6 +17,14 @@ describe("extractDocument", () => {
   it("rejects unsupported types", async () => {
     await expect(extractDocument("notes.docx", new TextEncoder().encode("nope"))).rejects.toThrow(
       /PDF or a \.txt/i,
+    );
+  });
+});
+
+describe("normalizeExtractedText", () => {
+  it("preserves Unicode superscripts as explicit exponent notation", () => {
+    expect(normalizeExtractedText("Time = 1.0 × 10⁻⁸ seconds; rate = 10⁸ s⁻¹")).toBe(
+      "Time = 1.0 × 10^-8 seconds; rate = 10^8 s^-1",
     );
   });
 });

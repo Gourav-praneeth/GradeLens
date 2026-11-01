@@ -59,6 +59,7 @@ describe("bulk grading identity guard", () => {
           studentId: { not: null },
           matchStatus: "matched",
         }),
+        take: 4,
       }),
     );
     await expect(response.json()).resolves.toMatchObject({ graded: 1, unresolved: 2 });

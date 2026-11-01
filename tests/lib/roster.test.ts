@@ -100,6 +100,33 @@ describe("matchSubmissionToRoster", () => {
     if (result.status === "ambiguous") expect(result.candidates).toHaveLength(2);
   });
 
+  it("matches a unique roster name at the start of an assignment filename", () => {
+    const assignmentRoster = [
+      ...roster,
+      { id: "3", name: "Diego Kury" },
+      { id: "4", name: "Julio Rios Razo" },
+    ];
+
+    expect(
+      matchSubmissionToRoster({ filename: "DiegoKury_Assignment1.pdf" }, assignmentRoster),
+    ).toMatchObject({ status: "matched", student: { id: "3" }, method: "name" });
+    expect(
+      matchSubmissionToRoster({ filename: "Julio_Rios_Razo_assignment1.pdf" }, assignmentRoster),
+    ).toMatchObject({ status: "matched", student: { id: "4" }, method: "name" });
+  });
+
+  it("prefers the longest roster name when name prefixes overlap", () => {
+    const result = matchSubmissionToRoster(
+      { filename: "Alex_Chen_Jr_Assignment1.pdf" },
+      [
+        ...roster,
+        { id: "3", name: "Alex Chen Jr" },
+      ],
+    );
+
+    expect(result).toMatchObject({ status: "matched", student: { id: "3" }, method: "name" });
+  });
+
   it("does not match arbitrary identifier fragments", () => {
     expect(
       matchSubmissionToRoster({ filename: "paper-S-100-final.pdf" }, roster),

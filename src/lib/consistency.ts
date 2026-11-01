@@ -41,6 +41,7 @@ export type DeductionCluster = {
   minPoints: number;
   maxPointsAwarded: number;
   spread: number;
+  comparable: boolean;
   inconsistent: boolean;
   rows: DeductionRow[];
 };
@@ -79,6 +80,7 @@ export function clusterDeductions(rows: DeductionRow[]): DeductionCluster[] {
     const maxPointsAwarded = Math.max(...points);
     const rounded = new Set(points.map((value) => value.toFixed(1)));
     const [, fingerprint] = key.split("::");
+    const comparable = members.length > 1;
     clusters.push({
       criterionId: members[0].criterionId,
       criterionLabel: members[0].criterionLabel,
@@ -87,13 +89,15 @@ export function clusterDeductions(rows: DeductionRow[]): DeductionCluster[] {
       minPoints,
       maxPointsAwarded,
       spread: maxPointsAwarded - minPoints,
-      inconsistent: rounded.size > 1,
+      comparable,
+      inconsistent: comparable && rounded.size > 1,
       rows: members,
     });
   }
 
   return clusters.sort((a, b) => {
     if (a.inconsistent !== b.inconsistent) return a.inconsistent ? -1 : 1;
+    if (a.comparable !== b.comparable) return a.comparable ? -1 : 1;
     return b.rows.length - a.rows.length;
   });
 }

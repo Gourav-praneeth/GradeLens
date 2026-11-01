@@ -68,9 +68,13 @@ ANTHROPIC_API_KEY=<shared fallback model key>
 SIGNUP_INVITE=<private invite code>
 ALLOW_SIGNUP=false
 FEEDBACK_ADMIN_EMAIL=<feedback destination>
+# Optional bulk-grading tuning; defaults shown
+GRADING_BATCH_SIZE=4
+GRADING_CONCURRENCY=2
 ```
 
 Instructors can save a personal model key under **Account**, so a shared model key is not required.
+Keep grading concurrency low on provider free tiers. GradeLens caps the configured batch size at 10 and concurrency at 4.
 
 ## 4. Deploy and verify
 

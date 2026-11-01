@@ -7,14 +7,15 @@ Living list of what is built and what should come next. Update this file wheneve
 - Create an assignment with a title inside a course
 - Upload or paste assignment questions (PDF or text)
 - Upload or paste official solutions (PDF or text)
-- Extract text from PDFs and warn when a file has no extractable text
+- Extract text from PDFs, preserve Unicode scientific-notation exponents, and warn when a file has no extractable text
 - Generate a rubric from the official solutions
 - Edit rubric criteria, point values, and full-credit descriptions
 - Upload student submissions as PDF or text
 - Import Canvas assignment submissions by exact Canvas user identity
-- Bulk-match uploads primarily by SIS login, with Canvas ID, student ID, email, manifest, and unique-name fallbacks
+- Bulk-match uploads primarily by SIS login, with Canvas ID, student ID, email, manifest, and unique roster-name prefixes such as `DiegoKury_Assignment1.pdf`
 - Review ambiguous or unmatched files before bulk grading
-- Grade one submission or all ungraded submissions
+- Grade one submission or all ungraded submissions in bounded, concurrent batches that stay within hosting request limits
+- Math-aware grading instructions require independent verification, accept equivalent formulas, and account for flattened PDF superscripts before deducting points
 - Show total score, per-criterion marks, and an explanation for every deduction
 - Quote evidence from the student work next to each mark
 - Sidebar navigation across courses, assignments, overview, and submissions
@@ -29,7 +30,7 @@ Living list of what is built and what should come next. Update this file wheneve
 - One-way Canvas roster sync with encrypted instructor tokens and non-destructive enrollment updates
 - Shared TA access on the same course and assignments
 - Submission names match the course roster when filenames look like student names
-- Class-wide review of similar deductions and a score distribution
+- Class-wide review of similar deductions and a score distribution, with honest single-case labels and a warning that automated grouping cannot replace human review
 - Export for Canvas and Gradescope in addition to the GradeLens roster CSV
 - Courses dashboard as the post-login home, with a course workspace sidebar
 - Course overview, gradebook, roster profiles, calendar, and analytics
@@ -61,7 +62,6 @@ Additions that would make a real autograder useful in a course:
 - **Blind grading mode** — hide student labels until marks are saved
 - **Comment bank** — reuse frequent deduction notes across the stack
 - **Late / completeness checks** — flag missing pages or unanswered questions before scoring
-- **Math-aware grading** — accept equivalent algebraic forms, not just string match
 - **Code assignments** — compile/run hidden tests, then explain failing cases in prose
 - **Audit trail** — who changed a score and when
 - **Announcement of cutoffs** — preview letter-grade distribution before release

@@ -222,7 +222,7 @@ Leave **Student on roster** as “Match from filename” and upload all three fi
 - [`sample-work/jordan-lee.txt`](sample-work/jordan-lee.txt)
 - [`sample-work/sam-patel.txt`](sample-work/sam-patel.txt)
 
-Filenames like `alex-chen.txt` or `Alex_Chen.pdf` match roster names (hyphens, underscores, and extension are ignored).
+Filenames like `alex-chen.txt` or `Alex_Chen.pdf` match roster names (hyphens, underscores, and extension are ignored). A unique full name at the beginning also matches when an assignment suffix follows, such as `DiegoKury_Assignment1.pdf` or `Julio_Rios_Razo_assignment1.pdf`.
 For a deterministic institutional match, use `SIS_LOGIN_ID__paper.pdf`, such as `achen__homework.pdf`.
 
 **Checks**
@@ -232,6 +232,7 @@ For a deterministic institutional match, use `SIS_LOGIN_ID__paper.pdf`, such as 
 - Uploading a single file with the roster dropdown set attaches that student even if the filename is different.
 - Optional **Student name** field overrides the label when the file does not match.
 - A second submission for the same student is reported as a duplicate instead of being added.
+- A name prefix is only accepted when it uniquely identifies the longest matching roster name; duplicate names remain unresolved.
 
 ### Manifest and unresolved review
 

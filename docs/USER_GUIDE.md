@@ -195,7 +195,7 @@ Example:
 alice01__assignment-1.pdf
 ```
 
-GradeLens prioritizes SIS Login ID and also supports exact Canvas ID, student ID, email, manifest, and unique-name matching. Ambiguous or unmatched files remain in **Needs match** instead of being assigned silently.
+GradeLens prioritizes SIS Login ID and also supports exact Canvas ID, student ID, email, manifest, and unique-name matching. A unique roster name may appear at the start of a filename followed by an assignment suffix, such as `DiegoKury_Assignment1.pdf` or `Julio_Rios_Razo_assignment1.pdf`. Ambiguous or unmatched files remain in **Needs match** instead of being assigned silently.
 
 ### Submission manifest
 
@@ -232,9 +232,9 @@ Never treat quoted evidence as verified automatically. Confirm it exists in the 
 
 ### Grade the remaining stack
 
-Select **Grade ungraded** to process submissions without a saved grade. Unresolved submissions are skipped until matched to a student.
+Select **Grade ungraded** to process submissions without a saved grade. Unresolved submissions are skipped until matched to a student. GradeLens sends bounded batches with limited concurrency and automatically continues until the available stack is complete. If a provider rejects a paper, the run stops with the student-specific error so you can retry deliberately.
 
-Long grading runs can be interrupted by free-host cold starts or restarts. Confirm completion before relying on the class totals.
+Long grading runs can still be interrupted by free-host cold starts or restarts. Keep the grading page open and confirm completion before relying on the class totals.
 
 ### Override a score
 
@@ -244,7 +244,7 @@ An instructor or TA can override a criterion score. Enter the corrected score an
 
 ### Class review
 
-Open **Review** to compare deductions across the class. Look for inconsistent treatment of similar answers before releasing results.
+Open **Review** to compare deductions across the class. Repeated, similarly worded reasons are compared for score conflicts; a deduction seen once is labeled **Single case**, not **Same mark**. Automated grouping can miss mathematically equivalent answers and differently worded reasons, so inspect every deduction before releasing results.
 
 ### Gradebook and analytics
 
@@ -296,6 +296,7 @@ Use fictional data only:
 - Supported grading inputs are text-based PDF, TXT, and Markdown.
 - Scanned and handwritten work is not reliably supported.
 - AI grading can be wrong, inconsistent, or influenced by text inside submissions.
+- GradeLens asks the model to recompute answers, accept equivalent algebra, and account for flattened exponents, but these instructions do not guarantee a correct grade.
 - Keep a human reviewer in the loop before grades become official.
 - Use fake or institutionally approved data during the pilot.
 - Do not upload student data until institutional privacy, retention, and vendor requirements are satisfied.

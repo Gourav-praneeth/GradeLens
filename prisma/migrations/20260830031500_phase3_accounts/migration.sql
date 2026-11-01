@@ -4,7 +4,7 @@ CREATE TABLE "User" (
     "email" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "passwordHash" TEXT NOT NULL,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
@@ -13,7 +13,7 @@ CREATE TABLE "Session" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "token" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
-    "expiresAt" DATETIME NOT NULL,
+    "expiresAt" TIMESTAMP(3) NOT NULL,
     CONSTRAINT "Session_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
@@ -23,7 +23,7 @@ CREATE TABLE "Course" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "name" TEXT NOT NULL,
     "code" TEXT,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE "CourseMember" (
@@ -42,7 +42,7 @@ CREATE TABLE "CourseInvite" (
     "courseId" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "role" TEXT NOT NULL DEFAULT 'ta',
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT "CourseInvite_courseId_fkey" FOREIGN KEY ("courseId") REFERENCES "Course" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
@@ -58,6 +58,10 @@ CREATE TABLE "Student" (
 
 ALTER TABLE "Assignment" ADD COLUMN "courseId" TEXT;
 CREATE INDEX "Assignment_courseId_idx" ON "Assignment"("courseId");
+ALTER TABLE "Assignment" ADD CONSTRAINT "Assignment_courseId_fkey"
+    FOREIGN KEY ("courseId") REFERENCES "Course"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE "Submission" ADD COLUMN "studentId" TEXT;
 CREATE INDEX "Submission_studentId_idx" ON "Submission"("studentId");
+ALTER TABLE "Submission" ADD CONSTRAINT "Submission_studentId_fkey"
+    FOREIGN KEY ("studentId") REFERENCES "Student"("id") ON DELETE SET NULL ON UPDATE CASCADE;

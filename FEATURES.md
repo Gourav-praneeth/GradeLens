@@ -34,10 +34,10 @@ Living list of what is built and what should come next. Update this file wheneve
 - Courses dashboard as the post-login home, with a course workspace sidebar
 - Course overview, gradebook, roster profiles, calendar, and analytics
 - Login branding, remember me, stale-session recovery, email verification, and password reset by email
-- Production hosting with persistent SQLite and uploads, plus invite-only signup on a public URL
+- Production hosting with Neon PostgreSQL and S3-compatible object storage, plus invite-only signup on a public URL
 - Personal Groq, OpenAI, or Anthropic API keys in Account settings (encrypted at rest; server .env is a fallback)
 - In-app feedback: instructors send a private note; only the configured site admin (or first-account fallback) can read the inbox
-- Deterministic lint and test gate blocks Railway deployments before production when verification fails
+- Deterministic lint and test gate blocks deployments before production when verification fails
 - Dashboard role labels distinguish course instructors from TAs and use one clear Add course action
 - Semester dropdown and high-contrast named colors make course offerings consistent and easy to distinguish
 - Complete in-app field guide explains every account, course, roster, assignment, rubric, grading, feedback, and export control

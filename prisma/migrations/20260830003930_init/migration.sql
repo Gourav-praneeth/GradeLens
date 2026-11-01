@@ -6,16 +6,16 @@ CREATE TABLE "Assignment" (
     "questionsText" TEXT NOT NULL DEFAULT '',
     "solutionsText" TEXT NOT NULL DEFAULT '',
     "status" TEXT NOT NULL DEFAULT 'draft',
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL
 );
 
 -- CreateTable
 CREATE TABLE "Rubric" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "assignmentId" TEXT NOT NULL,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
     CONSTRAINT "Rubric_assignmentId_fkey" FOREIGN KEY ("assignmentId") REFERENCES "Assignment" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
@@ -24,7 +24,7 @@ CREATE TABLE "RubricCriterion" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "rubricId" TEXT NOT NULL,
     "label" TEXT NOT NULL,
-    "maxPoints" REAL NOT NULL,
+    "maxPoints" DOUBLE PRECISION NOT NULL,
     "fullCreditDescription" TEXT NOT NULL,
     "sortOrder" INTEGER NOT NULL,
     CONSTRAINT "RubricCriterion_rubricId_fkey" FOREIGN KEY ("rubricId") REFERENCES "Rubric" ("id") ON DELETE CASCADE ON UPDATE CASCADE
@@ -40,7 +40,7 @@ CREATE TABLE "Submission" (
     "extractedText" TEXT NOT NULL DEFAULT '',
     "extractWarning" TEXT,
     "status" TEXT NOT NULL DEFAULT 'uploaded',
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT "Submission_assignmentId_fkey" FOREIGN KEY ("assignmentId") REFERENCES "Assignment" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
@@ -48,10 +48,10 @@ CREATE TABLE "Submission" (
 CREATE TABLE "GradeResult" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "submissionId" TEXT NOT NULL,
-    "totalAwarded" REAL NOT NULL,
-    "totalPossible" REAL NOT NULL,
+    "totalAwarded" DOUBLE PRECISION NOT NULL,
+    "totalPossible" DOUBLE PRECISION NOT NULL,
     "summary" TEXT,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT "GradeResult_submissionId_fkey" FOREIGN KEY ("submissionId") REFERENCES "Submission" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
@@ -60,7 +60,7 @@ CREATE TABLE "CriterionScore" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "gradeResultId" TEXT NOT NULL,
     "criterionId" TEXT NOT NULL,
-    "pointsAwarded" REAL NOT NULL,
+    "pointsAwarded" DOUBLE PRECISION NOT NULL,
     "deductionReason" TEXT NOT NULL,
     "evidenceQuote" TEXT,
     CONSTRAINT "CriterionScore_gradeResultId_fkey" FOREIGN KEY ("gradeResultId") REFERENCES "GradeResult" ("id") ON DELETE CASCADE ON UPDATE CASCADE,

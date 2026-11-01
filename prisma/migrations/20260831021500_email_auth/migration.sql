@@ -1,5 +1,5 @@
 -- AlterTable
-ALTER TABLE "User" ADD COLUMN "emailVerifiedAt" DATETIME;
+ALTER TABLE "User" ADD COLUMN "emailVerifiedAt" TIMESTAMP(3);
 
 -- Existing accounts are treated as verified so they are not locked out.
 UPDATE "User" SET "emailVerifiedAt" = "createdAt" WHERE "emailVerifiedAt" IS NULL;
@@ -10,9 +10,9 @@ CREATE TABLE "AuthToken" (
     "userId" TEXT NOT NULL,
     "type" TEXT NOT NULL,
     "tokenHash" TEXT NOT NULL,
-    "expiresAt" DATETIME NOT NULL,
-    "consumedAt" DATETIME,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "expiresAt" TIMESTAMP(3) NOT NULL,
+    "consumedAt" TIMESTAMP(3),
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT "AuthToken_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 

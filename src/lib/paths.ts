@@ -15,14 +15,6 @@ export function resolveUploadRoot(
 
 export function resolveDatabaseUrl(
   env: EnvMap = process.env,
-  cwd: string = process.cwd(),
 ): string | undefined {
-  const url = env.DATABASE_URL?.trim();
-  if (url === "file:./dev.db" || url === "file:dev.db") {
-    return `file:${path.join(cwd, "prisma", "dev.db")}`;
-  }
-  if (url) return url;
-  const dataDir = env.DATA_DIR?.trim();
-  if (dataDir) return `file:${path.join(path.resolve(dataDir), "gradelens.db")}`;
-  return undefined;
+  return env.DATABASE_URL?.trim() || undefined;
 }

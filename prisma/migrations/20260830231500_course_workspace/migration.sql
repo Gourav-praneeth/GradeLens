@@ -9,4 +9,4 @@ ALTER TABLE "Student" ADD COLUMN "studentNumber" TEXT;
 
 -- AlterTable
 ALTER TABLE "Assignment" ADD COLUMN "description" TEXT NOT NULL DEFAULT '';
-ALTER TABLE "Assignment" ADD COLUMN "dueAt" DATETIME;
+ALTER TABLE "Assignment" ADD COLUMN "dueAt" TIMESTAMP(3);

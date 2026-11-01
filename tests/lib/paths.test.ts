@@ -17,19 +17,12 @@ describe("resolveUploadRoot", () => {
 });
 
 describe("resolveDatabaseUrl", () => {
-  it("points the local sqlite alias at prisma/dev.db", () => {
-    expect(resolveDatabaseUrl({ DATABASE_URL: "file:./dev.db" }, "/app")).toBe(
-      `file:${path.join("/app", "prisma", "dev.db")}`,
-    );
+  it("returns the configured PostgreSQL URL", () => {
+    const url = "postgresql://gradelens:secret@db.example.com:5432/gradelens?sslmode=require";
+    expect(resolveDatabaseUrl({ DATABASE_URL: url })).toBe(url);
   });
 
-  it("keeps an explicit production sqlite path", () => {
-    expect(resolveDatabaseUrl({ DATABASE_URL: "file:/data/gradelens.db" }, "/app")).toBe("file:/data/gradelens.db");
-  });
-
-  it("derives a sqlite file from DATA_DIR when DATABASE_URL is empty", () => {
-    expect(resolveDatabaseUrl({ DATA_DIR: "/data" }, "/app")).toBe(
-      `file:${path.join(path.resolve("/data"), "gradelens.db")}`,
-    );
+  it("does not fall back to ephemeral local storage", () => {
+    expect(resolveDatabaseUrl({ DATA_DIR: "/data" })).toBeUndefined();
   });
 });

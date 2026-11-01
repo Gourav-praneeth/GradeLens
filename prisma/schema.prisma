@@ -3,8 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DATABASE_URL_UNPOOLED")
 }
 
 model User {
@@ -144,6 +145,7 @@ model Submission {
   student            Student?     @relation(fields: [studentId], references: [id], onDelete: SetNull)
   studentLabel       String
   originalName       String
+  // Provider-neutral object key. The historical name is kept to avoid a data migration.
   storedPath         String
   extractedText      String       @default("")
   extractWarning     String?

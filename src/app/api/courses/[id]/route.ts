@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { isOwner, requireCourseAccess, requireUser } from "@/lib/access";
 import { COURSE_ACCENTS, isValidCourseAccent, isValidSemester } from "@/lib/courseOptions";
 import { prisma } from "@/lib/db";
+import { deleteUploads } from "@/lib/files";
 import { jsonError } from "@/lib/http";
 
 export const runtime = "nodejs";
@@ -64,6 +65,15 @@ export async function DELETE(_request: Request, context: RouteContext) {
   if (access.error) return access.error;
   if (!isOwner(access.member.role)) {
     return jsonError("Only the course instructor can delete this course.", 403);
+  }
+  const uploads = await prisma.submission.findMany({
+    where: { assignment: { courseId: id } },
+    select: { storedPath: true },
+  });
+  try {
+    await deleteUploads(uploads.map((upload) => upload.storedPath));
+  } catch {
+    return jsonError("Could not remove the course files. Try again.", 503);
   }
   await prisma.course.delete({ where: { id } });
   return NextResponse.json({ ok: true });

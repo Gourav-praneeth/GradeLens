@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { guardAssignment } from "@/lib/access";
 import { prisma } from "@/lib/db";
 import { extractDocument } from "@/lib/extract";
-import { labelFromFilename, saveUpload } from "@/lib/files";
+import { deleteUploads, labelFromFilename, saveUpload } from "@/lib/files";
 import { jsonError } from "@/lib/http";
 import { matchSubmissionToRoster } from "@/lib/roster";
 import { normalizeFilename, parseSubmissionManifest } from "@/lib/submissionManifest";
@@ -106,22 +106,27 @@ export async function POST(request: Request, context: RouteContext) {
         continue;
       }
 
-      const storedPath = await saveUpload(id, file.name, bytes);
+      const storedPath = await saveUpload(id, file.name, bytes, file.type);
       const matchStatus = match.status;
-      const submission = await prisma.submission.create({
-        data: {
-          assignmentId: id,
-          studentId: student?.id ?? null,
-          studentLabel: student?.name ?? fromFile,
-          originalName: file.name,
-          storedPath,
-          extractedText: extracted.text,
-          extractWarning: extracted.warning,
-          source: "upload",
-          matchStatus,
-          matchMethod: match.status === "unmatched" ? null : match.method,
-        },
-      });
+      const submission = await prisma.submission
+        .create({
+          data: {
+            assignmentId: id,
+            studentId: student?.id ?? null,
+            studentLabel: student?.name ?? fromFile,
+            originalName: file.name,
+            storedPath,
+            extractedText: extracted.text,
+            extractWarning: extracted.warning,
+            source: "upload",
+            matchStatus,
+            matchMethod: match.status === "unmatched" ? null : match.method,
+          },
+        })
+        .catch(async (error) => {
+          await deleteUploads([storedPath]).catch(() => undefined);
+          throw error;
+        });
       created.push(submission);
       usedFilenames.add(normalizeFilename(file.name));
       if (student) {

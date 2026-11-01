@@ -7,7 +7,8 @@ COPY prisma ./prisma
 RUN npm ci
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
-ENV DATABASE_URL="file:./prisma/build.db"
+ENV DATABASE_URL="postgresql://gradelens:gradelens@127.0.0.1:5432/gradelens_build"
+ENV DATABASE_URL_UNPOOLED="postgresql://gradelens:gradelens@127.0.0.1:5432/gradelens_build"
 RUN npm run verify
 RUN npx prisma generate && npm run build
 
@@ -19,7 +20,6 @@ ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV PORT=3000
 ENV HOSTNAME=0.0.0.0
-ENV DATA_DIR=/data
 
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./

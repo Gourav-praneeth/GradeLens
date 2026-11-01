@@ -5,7 +5,7 @@ import {
 import { requireCanvasCredentials } from "./canvasCredentials";
 import { prisma } from "./db";
 import { extractDocument } from "./extract";
-import { saveUpload } from "./files";
+import { deleteUploads, saveUpload } from "./files";
 
 export type CanvasSubmissionImportResult = {
   imported: number;
@@ -110,10 +110,13 @@ export async function importCanvasSubmissions(
       continue;
     }
 
+    let uploadedKey: string | null = null;
+    let persisted = false;
     try {
       const bytes = await downloadCanvasSubmissionFile(credentials, file);
       const extracted = await extractDocument(file.filename, bytes);
       const storedPath = await saveUpload(assignmentId, file.filename, bytes);
+      uploadedKey = storedPath;
       const matchStatus = student ? "matched" : "unmatched";
       const studentLabel = student?.name ?? `Canvas user ${file.canvasUserId}`;
 
@@ -136,6 +139,14 @@ export async function importCanvasSubmissions(
             },
           }),
         ]);
+        persisted = true;
+        if (existing.storedPath !== storedPath) {
+          try {
+            await deleteUploads([existing.storedPath]);
+          } catch {
+            result.warnings.push(`${studentLabel}'s previous file could not be removed.`);
+          }
+        }
         result.updated += 1;
         if (existing.gradeResult) {
           result.warnings.push(`${studentLabel} submitted new work and now requires regrading.`);
@@ -161,6 +172,7 @@ export async function importCanvasSubmissions(
           ...created,
           gradeResult: null,
         });
+        persisted = true;
         result.imported += 1;
       }
       if (student) usedStudentIds.add(student.id);
@@ -169,6 +181,9 @@ export async function importCanvasSubmissions(
         result.warnings.push(`${file.filename}: ${extracted.warning}`);
       }
     } catch (error) {
+      if (uploadedKey && !persisted) {
+        await deleteUploads([uploadedKey]).catch(() => undefined);
+      }
       result.rejected += 1;
       result.warnings.push(
         error instanceof Error ? `${file.filename}: ${error.message}` : `${file.filename} could not be imported.`,

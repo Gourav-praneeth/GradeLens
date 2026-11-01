@@ -6,7 +6,9 @@ See [FEATURES.md](FEATURES.md) for what is shipped and what comes next. For a cl
 
 ## Requirements
 
-- Node.js 20+
+- Node.js 20
+- PostgreSQL (Neon works well for low-cost deployments)
+- S3-compatible object storage (Neon Object Storage, Cloudflare R2, or AWS S3)
 - Each instructor or TA can save their own Groq, OpenAI, or Anthropic API key in Account settings. Optionally set `GROQ_API_KEY` (free), `ANTHROPIC_API_KEY`, or `OPENAI_API_KEY` in `.env` as a shared fallback.
 
 ## Run locally
@@ -16,7 +18,7 @@ npm install
 cp .env.example .env
 ```
 
-Optionally put a fallback API key in `.env`. Instructors can also paste a personal key after sign-in under **Account**. For local testing, create a free key at [console.groq.com](https://console.groq.com). Then:
+Set the Neon URLs and storage variables in `.env`. For local-only development, set `STORAGE_DRIVER=local`; uploads then go under `uploads/`. Optionally put a fallback API key in `.env`. Instructors can also paste a personal key after sign-in under **Account**. For local testing, create a free key at [console.groq.com](https://console.groq.com). Then:
 
 ```bash
 npx prisma migrate deploy
@@ -25,24 +27,32 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) and create an instructor account. After sign-in you land on the courses dashboard.
 
-## Deploy
+## Deploy on Render with Neon
 
-The app is a long-running Node server with SQLite and uploaded files on disk. **Railway** (or any host that can run the Dockerfile with a persistent volume) is the intended production setup. Do not use a serverless host with an ephemeral filesystem.
+The production app is stateless: PostgreSQL holds application data and S3-compatible object storage holds submissions. This is compatible with Render's ephemeral filesystem.
 
-1. Create a Railway project from this repo. It will build the `Dockerfile`.
-2. Add a volume and mount it at `/data`.
-3. Optional: set `GROQ_API_KEY` (or another LLM key) as a fallback, and `LLM_KEY_SECRET` to encrypt personal keys. Instructors should save their own keys in Account settings. The container defaults `DATABASE_URL` and `UPLOAD_DIR` under `/data`.
-4. Optional: `SIGNUP_INVITE` so extra instructors can join without a course staff invite. `ALLOW_SIGNUP=true` opens signup to anyone with the URL.
-5. Set `RESEND_API_KEY`, `EMAIL_FROM`, and `PUBLIC_APP_URL` so GradeLens can verify emails and send password-reset messages.
-6. Deploy, open the HTTPS URL, and create the **first** account. After that, production signup is limited to invited staff emails, a matching invite code, or `ALLOW_SIGNUP=true`.
+1. Create an empty Neon project and a private object-storage bucket.
+2. In Render, create a Web Service from this repository and select the Docker runtime and Free instance.
+3. Add the pooled Neon URL as `DATABASE_URL` and the direct URL as `DATABASE_URL_UNPOOLED`.
+4. Add `STORAGE_DRIVER=s3`, `AWS_REGION`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, and `AWS_ENDPOINT_URL_S3`. GradeLens defaults to the private `uploads` bucket declared in `neon.ts`; `STORAGE_BUCKET` can override it.
+5. Set a long random `LLM_KEY_SECRET`. It is intentionally required by the production entrypoint.
+6. Optional: add a shared `GROQ_API_KEY`, `ANTHROPIC_API_KEY`, or `OPENAI_API_KEY`. Instructors can instead save personal keys under **Account**.
+7. Optional: set `SIGNUP_INVITE`; `ALLOW_SIGNUP=true` opens signup to anyone with the URL.
+8. Set `RESEND_API_KEY`, `EMAIL_FROM`, and `PUBLIC_APP_URL` for verification and password resets.
+9. Set Render's health check path to `/api/health`. The container applies Prisma migrations before starting.
+10. Deploy and create the **first** account. Later signup is limited to invited staff, the invite code, or `ALLOW_SIGNUP=true`.
+
+The PostgreSQL migration history is intended for a fresh Neon database. It is not an in-place conversion of an existing SQLite database; export and import old production data separately if you have any that must be retained.
+
+For the exact environment-variable checklist and first-deploy verification steps, see [docs/RENDER_NEON_DEPLOYMENT.md](docs/RENDER_NEON_DEPLOYMENT.md).
 
 Use **fake student work** on a public URL. The model is a first pass; keep a human in the loop before scores are official.
 
-A container with a volume at `/data` also works on Fly.io, Render, or a VPS:
+A container also works on another Docker host when the same PostgreSQL and object-storage variables are supplied:
 
 ```bash
 docker build -t gradelens .
-docker run --rm -p 3000:3000 -v gradelens-data:/data -e GROQ_API_KEY=... gradelens
+docker run --rm -p 3000:3000 --env-file .env gradelens
 ```
 
 ## How it works

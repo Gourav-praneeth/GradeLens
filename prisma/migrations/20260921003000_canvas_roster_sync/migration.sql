@@ -4,7 +4,7 @@ ALTER TABLE "User" ADD COLUMN "canvasTokenCipher" TEXT;
 
 -- AlterTable
 ALTER TABLE "Course" ADD COLUMN "canvasCourseId" TEXT;
-ALTER TABLE "Course" ADD COLUMN "canvasLastSyncedAt" DATETIME;
+ALTER TABLE "Course" ADD COLUMN "canvasLastSyncedAt" TIMESTAMP(3);
 
 -- AlterTable
 ALTER TABLE "Student" ADD COLUMN "canvasUserId" TEXT;

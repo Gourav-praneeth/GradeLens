@@ -37,6 +37,8 @@ You need a running local server and at least one LLM key. See the project [READM
 - On a production deploy, a second uninvited signup is rejected unless `SIGNUP_INVITE` or `ALLOW_SIGNUP=true` is set. Invited TA emails still work.
 - With `RESEND_API_KEY` set, an unverified account cannot sign in until the email link is used.
 
+`SIGNUP_INVITE` is an optional deployment-wide fallback code; GradeLens does not generate per-user codes. The recommended grader onboarding flow is to invite the grader's exact email under **Course → Staff**. That pending invitation authorizes signup with no code, even when outbound email is not configured.
+
 ### Log in and log out
 
 1. Log out, then sign in at `/login` with the same email and password.

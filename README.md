@@ -2,7 +2,7 @@
 
 A local autograder for TAs and professors. Create a course, add a roster, generate a rubric from official solutions, then grade student PDFs or text with an explanation for every deduction.
 
-See [FEATURES.md](FEATURES.md) for what is shipped and what comes next. For a click-through of every feature, including sample files, see [docs/TESTING.md](docs/TESTING.md).
+See [docs/USER_GUIDE.md](docs/USER_GUIDE.md) for complete instructor and grader instructions, [FEATURES.md](FEATURES.md) for what is shipped and what comes next, and [docs/TESTING.md](docs/TESTING.md) for acceptance tests and sample files. User-visible feature changes should update all applicable guides in the same commit.
 
 ## Requirements
 
